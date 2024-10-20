@@ -21,7 +21,7 @@ import server.DAO.UserDAO;
  * @author quang
  */
 public class ServerThread implements Runnable {
-    
+
     private User user;
     private Socket socketOfServer;
     private int clientNumber;
@@ -31,11 +31,11 @@ public class ServerThread implements Runnable {
 //    private Room room;
     private UserDAO userDAO;
     private String clientIP;
-    
+
     public BufferedReader getIs() {
         return is;
     }
-    
+
     public BufferedWriter getOs() {
         return os;
     }
@@ -43,7 +43,6 @@ public class ServerThread implements Runnable {
 //    public void setRoom(Room room) {
 //        this.room = room;
 //    }
-    
     public int getClientNumber() {
         return clientNumber;
     }
@@ -52,11 +51,9 @@ public class ServerThread implements Runnable {
         return user;
     }
 
-
 //    public Room getRoom() {
 //        return room;
 //    }
-
     public String getClientIP() {
         return clientIP;
     }
@@ -64,7 +61,7 @@ public class ServerThread implements Runnable {
     public void setUser(User user) {
         this.user = user;
     }
-    
+
     public ServerThread(Socket socketOfServer, int clientNumber) {
         this.socketOfServer = socketOfServer;
         this.clientNumber = clientNumber;
@@ -73,18 +70,18 @@ public class ServerThread implements Runnable {
         isClosed = false;
 //        room = null;
         //Trường hợp test máy ở server sẽ lỗi do hostaddress là localhost
-        if(this.socketOfServer.getInetAddress().getHostAddress().equals("127.0.0.1")){
+        if (this.socketOfServer.getInetAddress().getHostAddress().equals("127.0.0.1")) {
             clientIP = "127.0.0.1";
-        }
-        else{
+        } else {
             clientIP = this.socketOfServer.getInetAddress().getHostAddress();
         }
-        
+
     }
-    public String getStringFromUser(User user1){
-        return ""+user1.getID()+","+user1.getUsername()
-                                +","+user1.getPassword()+","+user1.getNickname()+","+user1.getNumberOfGame()+","+
-                                user1.getNumberOfwin()+","+user1.getNumberOfDraw()+","+user1.getRank();
+
+    public String getStringFromUser(User user1) {
+        return "" + user1.getID() + "," + user1.getUsername()
+                + "," + user1.getPassword() + "," + user1.getNickname() + "," + user1.getNumberOfGame() + ","
+                + user1.getNumberOfwin() + "," + user1.getNumberOfDraw() + "," + user1.getRank();
     }
 //    
 //    public void goToOwnRoom() throws IOException{
@@ -96,7 +93,7 @@ public class ServerThread implements Runnable {
 //        write("go-to-room," + room.getID()+","+room.getCompetitor(this.getClientNumber()).getClientIP()+",0,"+getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser()));
 //         room.getCompetitor(this.clientNumber).write("go-to-room,"+ room.getID()+","+this.clientIP+",1,"+getStringFromUser(user));
 //    }
-    
+
     @Override
     public void run() {
         try {
@@ -113,29 +110,37 @@ public class ServerThread implements Runnable {
                 }
                 String[] messageSplit = message.split(",");
                 //Xác minh
-                if(messageSplit[0].equals("client-verify")){
+                if (messageSplit[0].equals("client-verify")) {
                     System.out.println(message);
                     User user1 = userDAO.verifyUser(new User(messageSplit[1], messageSplit[2]));
-                    if(user1==null)
-                        write("wrong-user,"+messageSplit[1]+","+messageSplit[2]);
-                    else if(!user1.getIsOnline()){
-                        write("login-success,"+getStringFromUser(user1));
+                    if (user1 == null) {
+                        write("wrong-user," + messageSplit[1] + "," + messageSplit[2]);
+                    } else if (!user1.getIsOnline()) {
+                        write("login-success," + getStringFromUser(user1));
                         this.user = user1;
                         userDAO.updateToOnline(this.user.getID());
 //                        Server.serverThreadBus.boardCast(clientNumber, "chat-server,"+user1.getNickname()+" đang online");
                     } else {
-                        write("dupplicate-login,"+messageSplit[1]+","+messageSplit[2]);
+                        write("dupplicate-login," + messageSplit[1] + "," + messageSplit[2]);
                     }
                 }
                 //Xử lý đăng kí
-                if(messageSplit[0].equals("register")){
-                   boolean checkdup = userDAO.checkDuplicated(messageSplit[1]);
-                   if(checkdup) write("duplicate-username,");
-                   else{
-                       User userRegister = new User(messageSplit[1], messageSplit[2], messageSplit[3]);
-                       userDAO.addUser(userRegister);
-                       write("register-success,");
-                   }
+                if (messageSplit[0].equals("register")) {
+                    boolean checkdup = userDAO.checkDuplicated(messageSplit[1]);
+                    if (checkdup) {
+                        write("duplicate-username,");
+                    } else {
+                        User userRegister = new User(messageSplit[1], messageSplit[2], messageSplit[3]);
+                        userDAO.addUser(userRegister);
+                        write("register-success,");
+                    }
+                }
+                //Xử lý người chơi đăng xuất
+                if (messageSplit[0].equals("offline")) {
+                    userDAO.updateToOffline(this.user.getID());
+//                    Server.admin.addMessage("[" + user.getID() + "] " + user.getNickname() + " đã offline");
+//                    Server.serverThreadBus.boardCast(clientNumber, "chat-server," + this.user.getNickname() + " đã offline");
+                    this.user = null;
                 }
             }
 

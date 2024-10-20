@@ -113,4 +113,17 @@ public class UserDAO extends DAO {
             ex.printStackTrace();
         }
     }
+
+    public void updateToOffline(int ID) {
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement("UPDATE user\n"
+                    + "SET IsOnline = 0\n"
+                    + "WHERE ID = ?");
+            preparedStatement.setInt(1, ID);
+            System.out.println(preparedStatement);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
 }
