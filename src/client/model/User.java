@@ -114,7 +114,13 @@ public class User {
     public String getNickname() {
         return nickname;
     }
+    public boolean isIsOnline() {
+        return isOnline;
+    }
 
+    public boolean isIsPlaying() {
+        return isPlaying;
+    }
 
 
     public int getNumberOfGame() {

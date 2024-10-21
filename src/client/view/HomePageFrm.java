@@ -5,15 +5,23 @@
 package client.view;
 
 import client.controller.Client;
+import client.model.User;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author quang
  */
 public class HomePageFrm extends javax.swing.JFrame {
+
+    private List<User> listFriend;
+    private boolean isClicked;
+    private Thread thread;
+    DefaultTableModel model;
 
     /**
      * Creates new form HomePageFrm
@@ -28,7 +36,7 @@ public class HomePageFrm extends javax.swing.JFrame {
         jLabel10.setText(Integer.toString(Client.user.getNumberOfwin()));
         jLabel7.setText(Integer.toString(Client.user.getNumberOfGame()));
         String txt = jTextArea1.getText();
-        jTextArea1.setText(txt+"\n");
+        jTextArea1.setText(txt + "\n");
         jTextArea1.setEditable(false);
         if (Client.user.getNumberOfGame() == 0) {
             jLabel9.setText("0");
@@ -46,7 +54,75 @@ public class HomePageFrm extends javax.swing.JFrame {
         } else {
             jLabel11.setText("" + Client.user.getRank());
         }
+//        defaultTableModel = (DefaultTableModel) jTable2.getModel();
+        isClicked = false;
+        Object[][] rows = {};
+        String[] columns = {"Nickname", "status"};
+        model = new DefaultTableModel(rows, columns) {
+            @Override
+            public Class<?> getColumnClass(int column) {
+                switch (column) {
+                    case 0:
+                        return String.class;
+                    case 1:
+                        return String.class;
+                    default:
+                        return Object.class;
+                }
+            }
+        };
+        jTable2.setModel(model);
+        requestUpdate();
+        startThread();
+    }
 
+    public void stopAllThread() {
+        isClicked = true;
+    }
+
+    public void startThread() {
+        thread = new Thread() {
+            @Override
+            public void run() {
+                while (!isClicked) {
+                    try {
+                        System.out.println("Xem danh sách bạn bè đang chạy!");
+                        requestUpdate();
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        };
+        thread.start();
+    }
+
+    public void requestUpdate() {
+        try {
+            Client.socketHandle.write("view-friend-list,");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+        }
+    }
+
+    public void updateFriendList(List<User> friends) {
+        listFriend = friends;
+        model.setRowCount(0);
+        String status;
+        for (User friend : listFriend) {
+            if (!friend.isIsOnline()) {
+                status = "Offline";
+            } else if (friend.isIsPlaying()) {
+                status = "Playing";
+            } else {
+                status = "Online";
+            }
+            model.addRow(new Object[]{
+                "" + friend.getNickname(),
+                status
+            });
+        }
     }
 
     /**
@@ -83,9 +159,9 @@ public class HomePageFrm extends javax.swing.JFrame {
         btnDangXuat = new javax.swing.JButton();
         btnOut = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         jLabel13 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
         btnMakeFriend = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -243,7 +319,12 @@ public class HomePageFrm extends javax.swing.JFrame {
 
         jPanel2.setBackground(new java.awt.Color(102, 102, 102));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel13.setText("DANH SÁCH BẠN BÈ");
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -254,35 +335,29 @@ public class HomePageFrm extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(jTable1);
-
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel13.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel13.setText("DANH SÁCH BẠN BÈ");
+        jScrollPane3.setViewportView(jTable2);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(24, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(20, 20, 20))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(51, 51, 51))))
+                .addContainerGap(60, Short.MAX_VALUE)
+                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(51, 51, 51))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32))
         );
 
         btnMakeFriend.setText("Kết bạn");
@@ -391,9 +466,10 @@ public class HomePageFrm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(rootPane, ex.getMessage());
         }
     }
-    public void addMessage(String message){
+
+    public void addMessage(String message) {
         String temp = jTextArea1.getText();
-        temp+=message+"\n";
+        temp += message + "\n";
         jTextArea1.setText(temp);
         jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
     }
@@ -427,8 +503,8 @@ public class HomePageFrm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTable jTable2;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField txtSendmessage;
     // End of variables declaration//GEN-END:variables

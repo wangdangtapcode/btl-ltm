@@ -177,6 +177,16 @@ public class ServerThread implements Runnable {
                     userDAO.makeFriend(this.user.getID(), Integer.parseInt(messageSplit[1]));
                     System.out.println("Kết bạn thành công");
                 }
+                //Xử lý xem danh sách bạn bè
+                if(messageSplit[0].equals("view-friend-list") && this.user != null){
+                    List<User> friends = userDAO.getListFriend(this.user.getID());
+                    String res = "return-friend-list,";
+                    for(User friend : friends){
+                        res += friend.getID() + "," + friend.getNickname()+"," + (friend.getIsOnline()==true?1:0) +"," + (friend.getIsPlaying()==true?1:0)+",";
+                    }
+                    System.out.println(res);
+                    write(res);
+                }
             }
 
         } catch (IOException e) {

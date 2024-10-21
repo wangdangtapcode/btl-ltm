@@ -8,6 +8,9 @@ import client.model.User;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  *
@@ -248,5 +251,48 @@ public class UserDAO extends DAO {
             e.printStackTrace();
         }
         return null;
+    }
+    public List<User> getListFriend(int ID) {
+        List<User> ListFriend = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement("SELECT User.ID, User.NickName, User.IsOnline, User.IsPlaying\n"
+                    + "FROM user\n"
+                    + "WHERE User.ID IN (\n"
+                    + "	SELECT ID_User1\n"
+                    + "    FROM friend\n"
+                    + "    WHERE ID_User2 = ?\n"
+                    + ")\n"
+                    + "OR User.ID IN(\n"
+                    + "	SELECT ID_User2\n"
+                    + "    FROM friend\n"
+                    + "    WHERE ID_User1 = ?\n"
+                    + ")");
+            preparedStatement.setInt(1, ID);
+            preparedStatement.setInt(2, ID);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                ListFriend.add(new User(rs.getInt(1),
+                        rs.getString(2),
+                        (rs.getInt(3)==1),
+                        (rs.getInt(4))==1));
+            }
+            ListFriend.sort(new Comparator<User>(){
+                @Override
+                public int compare(User o1, User o2) {
+                    if(o1.getIsOnline()&&!o2.getIsOnline())
+                        return -1;
+                    if(o1.getIsPlaying()&&!o2.getIsOnline())
+                        return -1;
+                    if(!o1.getIsPlaying()&&o1.getIsOnline()&&o2.getIsPlaying()&&o2.getIsOnline())
+                        return -1;
+                    return 0;
+                }
+                
+            });
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return ListFriend;
     }
 }

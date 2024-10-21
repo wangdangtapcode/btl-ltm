@@ -38,7 +38,16 @@ public class SocketHandle implements Runnable {
                 Integer.parseInt(message[start + 6]),
                 Integer.parseInt(message[start + 7]));
     }
-
+    public List<User> getListUser(String[] message){
+        List<User> friend = new ArrayList<>();
+        for(int i=1; i<message.length; i=i+4){
+            friend.add(new User(Integer.parseInt(message[i]),
+                    message[i+1],
+                    message[i+2].equals("1"),
+                    message[i+3].equals("1")));
+        }
+        return friend;
+    }
     @Override
     public void run() {
 
@@ -126,7 +135,12 @@ public class SocketHandle implements Runnable {
                     int ID = Integer.parseInt(messageSplit[1]);
                     String nickname = messageSplit[2];
                     Client.openView(Client.View.FRIENDREQUEST, ID, nickname);
-                }                
+                }
+                if(messageSplit[0].equals("return-friend-list")){
+                    if(Client.homePageFrm!=null){
+                        Client.homePageFrm.updateFriendList(getListUser(messageSplit));
+                    }
+                }   
             }
 
         } catch (UnknownHostException e) {
