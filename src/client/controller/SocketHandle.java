@@ -94,6 +94,12 @@ public class SocketHandle implements Runnable {
                     Client.openView(Client.View.LOGIN, messageSplit[1], messageSplit[2]);
                     Client.loginFrm.showError("Tài khoản đã đăng nhập ở nơi khác");
                 }
+                //Xử lý nhận thông tin, chat từ toàn server
+                if(messageSplit[0].equals("chat-server")){
+                    if(Client.homePageFrm!=null){
+                        Client.homePageFrm.addMessage(messageSplit[1]);
+                    }
+                }
             }
 
         } catch (UnknownHostException e) {

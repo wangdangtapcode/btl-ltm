@@ -142,6 +142,10 @@ public class ServerThread implements Runnable {
 //                    Server.serverThreadBus.boardCast(clientNumber, "chat-server," + this.user.getNickname() + " đã offline");
                     this.user = null;
                 }
+                //Xử lý chat toàn server
+                if(messageSplit[0].equals("chat-server")){
+                    Server.serverThreadBus.boardCast(clientNumber,messageSplit[0]+","+ user.getNickname()+" : "+ messageSplit[1]);
+                }
             }
 
         } catch (IOException e) {
