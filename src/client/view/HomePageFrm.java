@@ -27,9 +27,11 @@ public class HomePageFrm extends javax.swing.JFrame {
         jLabel8.setText(Client.user.getNickname());
         jLabel10.setText(Integer.toString(Client.user.getNumberOfwin()));
         jLabel7.setText(Integer.toString(Client.user.getNumberOfGame()));
+        String txt = jTextArea1.getText();
+        jTextArea1.setText(txt+"\n");
         jTextArea1.setEditable(false);
         if (Client.user.getNumberOfGame() == 0) {
-            jLabel9.setText("-");
+            jLabel9.setText("0");
         } else {
             jLabel9.setText(String.format("%.2f", (float) Client.user.getNumberOfwin() / Client.user.getNumberOfGame() * 100) + "%");
         }
@@ -84,6 +86,7 @@ public class HomePageFrm extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel13 = new javax.swing.JLabel();
+        btnMakeFriend = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -282,6 +285,13 @@ public class HomePageFrm extends javax.swing.JFrame {
                 .addGap(15, 15, 15))
         );
 
+        btnMakeFriend.setText("Kết bạn");
+        btnMakeFriend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMakeFriendActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -300,7 +310,8 @@ public class HomePageFrm extends javax.swing.JFrame {
                     .addComponent(btnDangXuat, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnMakeFriend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -319,13 +330,15 @@ public class HomePageFrm extends javax.swing.JFrame {
                 .addComponent(jButton2)
                 .addGap(32, 32, 32)
                 .addComponent(jButton3)
-                .addGap(36, 36, 36)
+                .addGap(18, 18, 18)
                 .addComponent(jButton4)
-                .addGap(32, 32, 32)
+                .addGap(18, 18, 18)
+                .addComponent(btnMakeFriend)
+                .addGap(18, 18, 18)
                 .addComponent(btnDangXuat)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(btnOut)
-                .addGap(136, 136, 136))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
@@ -356,6 +369,11 @@ public class HomePageFrm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtSendmessageKeyPressed
 
+    private void btnMakeFriendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMakeFriendActionPerformed
+        Client.openView(Client.View.MAKEFRIEND);
+        this.dispose();
+    }//GEN-LAST:event_btnMakeFriendActionPerformed
+
     private void sendMessage() {
         try {
             if (txtSendmessage.getText().isEmpty()) {
@@ -385,6 +403,7 @@ public class HomePageFrm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDangXuat;
+    private javax.swing.JButton btnMakeFriend;
     private javax.swing.JButton btnOut;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

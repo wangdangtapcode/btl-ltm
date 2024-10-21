@@ -5,10 +5,13 @@
 package client.controller;
 
 import client.model.User;
+import client.view.FriendRequestFrm;
+import client.view.GameNoticeFrm;
 import client.view.HomePageFrm;
 import client.view.LoginFrm;
+import client.view.MakeFriendFrm;
 import client.view.RegisterFrm;
-import view.GameNoticeFrm;
+
 
 /**
  *
@@ -21,6 +24,7 @@ public class Client {
         REGISTER,
         HOMEPAGE,
         ROOMLIST,
+        MAKEFRIEND,
         FRIENDLIST,
         FINDROOM,
         WAITINGROOM,
@@ -40,6 +44,8 @@ public class Client {
     public static RegisterFrm registerFrm;
     public static HomePageFrm homePageFrm;
     public static GameNoticeFrm gameNoticeFrm;
+    public static MakeFriendFrm makeFriendFrm;
+    public static FriendRequestFrm friendRequestFrm;
     public static SocketHandle socketHandle;
 
     public void initView() {
@@ -65,7 +71,9 @@ public class Client {
                 case GAMENOTICE:
                     gameNoticeFrm.dispose();
                     break;
-
+                case MAKEFRIEND:
+                    makeFriendFrm.dispose();
+                    break;
             }
         }
     }
@@ -86,8 +94,19 @@ public class Client {
         if (homePageFrm != null) {
             homePageFrm.dispose();
         }
+        if (makeFriendFrm != null) {
+            makeFriendFrm.dispose();
+        }
     }
-
+    public static void openView(View viewName, int arg1, String arg2){
+        if(viewName != null){
+            switch(viewName){
+                case FRIENDREQUEST:
+                    friendRequestFrm = new FriendRequestFrm(arg1, arg2);
+                    friendRequestFrm.setVisible(true);
+            }
+        }
+    }
     public static void openView(View viewName) {
         if (viewName != null) {
             switch (viewName) {
@@ -102,6 +121,10 @@ public class Client {
                 case HOMEPAGE:
                     homePageFrm = new HomePageFrm();
                     homePageFrm.setVisible(true);
+                    break;
+                case MAKEFRIEND:
+                    makeFriendFrm = new MakeFriendFrm();
+                    makeFriendFrm.setVisible(true);
                     break;
             }
         }

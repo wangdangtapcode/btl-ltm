@@ -127,8 +127,11 @@ public class ServerThread implements Runnable {
                 //Xử lý đăng kí
                 if (messageSplit[0].equals("register")) {
                     boolean checkdup = userDAO.checkDuplicated(messageSplit[1]);
+                    boolean checknndup = userDAO.checkNicknameDuplicated(messageSplit[3]);
                     if (checkdup) {
                         write("duplicate-username,");
+                    } else if (checknndup) {
+                        write("duplicate-nickname,");
                     } else {
                         User userRegister = new User(messageSplit[1], messageSplit[2], messageSplit[3]);
                         userDAO.addUser(userRegister);
@@ -143,8 +146,36 @@ public class ServerThread implements Runnable {
                     this.user = null;
                 }
                 //Xử lý chat toàn server
-                if(messageSplit[0].equals("chat-server")){
-                    Server.serverThreadBus.boardCast(clientNumber,messageSplit[0]+","+ user.getNickname()+" : "+ messageSplit[1]);
+                if (messageSplit[0].equals("chat-server")) {
+                    Server.serverThreadBus.boardCast(clientNumber, messageSplit[0] + "," + user.getNickname() + " : " + messageSplit[1]);
+                }
+                //Xử lý gui loi moi ket ban
+                if (messageSplit[0].equals("send-make-friend")) {
+                    Boolean checknn = userDAO.checkNicknameDuplicated(messageSplit[1]);
+                    User user2 = userDAO.getUserByNickname(messageSplit[1]);
+                    Boolean checkIsOnline = false;
+                    if(user2 != null){
+                        checkIsOnline = userDAO.checkIsOnline(user2.getID());
+                    }
+                    Boolean checkIsFriend = false;
+                    if (user2 != null){
+                        checkIsFriend = userDAO.checkIsFriend(Integer.parseInt(messageSplit[2]), user2.getID());
+                    }
+                    if(!checknn){
+                        write("unavailable-nickname,");
+                    }else if(!checkIsOnline && user2!= null){
+                        write("not-online,");
+                    }else if(checkIsFriend && user2!= null){
+                        write("nickname-is-friend,");
+                    }else {
+                    Server.serverThreadBus.getServerThreadByUserID(user2.getID())
+                            .write("make-friend-request,"+this.user.getID()+","+userDAO.getNickNameByID(this.user.getID()));
+                    }
+                }
+                //Xử lý xác nhận kết bạn
+                if(messageSplit[0].equals("make-friend-confirm")){
+                    userDAO.makeFriend(this.user.getID(), Integer.parseInt(messageSplit[1]));
+                    System.out.println("Kết bạn thành công");
                 }
             }
 

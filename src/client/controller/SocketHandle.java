@@ -72,6 +72,12 @@ public class SocketHandle implements Runnable {
                     Client.openView(Client.View.REGISTER);
                     JOptionPane.showMessageDialog(Client.registerFrm, "Tên tài khoản đã được người khác sử dụng");
                 }
+                //Xử lý register trùng nickname
+                if (messageSplit[0].equals("duplicate-nickname")) {
+                    Client.closeAllViews();
+                    Client.openView(Client.View.REGISTER);
+                    JOptionPane.showMessageDialog(Client.registerFrm, "Nickname đã được người khác sử dụng");
+                }
                 //Đăng nhập thành công
                 if (messageSplit[0].equals("login-success")) {
                     System.out.println("Đăng nhập thành công");
@@ -100,6 +106,27 @@ public class SocketHandle implements Runnable {
                         Client.homePageFrm.addMessage(messageSplit[1]);
                     }
                 }
+                //Xử lý khong tim thay nickname khi ket ban
+                if(messageSplit[0].equals("unavailable-nickname")){
+                    Client.openView(Client.View.MAKEFRIEND);
+                    Client.makeFriendFrm.showError("Nickname khong ton tai");
+                }
+                //Xử lý khong online khi ket ban
+                if(messageSplit[0].equals("not-online")){
+                    Client.openView(Client.View.MAKEFRIEND);
+                    Client.makeFriendFrm.showError("Nickname khong online");
+                }
+                //Xử lý da la ban khi ket ban
+                if(messageSplit[0].equals("nickname-is-friend")){
+                    Client.openView(Client.View.MAKEFRIEND);
+                    Client.makeFriendFrm.showError("Nickname da la ban");
+                }
+                //Xử lý yêu cầu kết bạn tới
+                if(messageSplit[0].equals("make-friend-request")){
+                    int ID = Integer.parseInt(messageSplit[1]);
+                    String nickname = messageSplit[2];
+                    Client.openView(Client.View.FRIENDREQUEST, ID, nickname);
+                }                
             }
 
         } catch (UnknownHostException e) {
