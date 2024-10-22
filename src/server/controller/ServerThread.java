@@ -4,6 +4,7 @@
  */
 package server.controller;
 
+import client.model.Room;
 import client.model.User;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -28,7 +29,7 @@ public class ServerThread implements Runnable {
     private BufferedReader is;
     private BufferedWriter os;
     private boolean isClosed;
-//    private Room room;
+    private Room room;
     private UserDAO userDAO;
     private String clientIP;
 
@@ -83,16 +84,16 @@ public class ServerThread implements Runnable {
                 + "," + user1.getPassword() + "," + user1.getNickname() + "," + user1.getNumberOfGame() + ","
                 + user1.getNumberOfwin() + "," + user1.getNumberOfDraw() + "," + user1.getRank();
     }
-//    
-//    public void goToOwnRoom() throws IOException{
-//        write("go-to-room," + room.getID()+","+room.getCompetitor(this.getClientNumber()).getClientIP()+",1,"+getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser()));
-//        room.getCompetitor(this.clientNumber).write("go-to-room," + room.getID()+","+this.clientIP+",0,"+getStringFromUser(user));
-//    }
-//    
-//    public void goToPartnerRoom() throws IOException{
-//        write("go-to-room," + room.getID()+","+room.getCompetitor(this.getClientNumber()).getClientIP()+",0,"+getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser()));
-//         room.getCompetitor(this.clientNumber).write("go-to-room,"+ room.getID()+","+this.clientIP+",1,"+getStringFromUser(user));
-//    }
+    
+    public void goToOwnRoom() throws IOException{
+        write("go-to-room," + room.getID()+","+room.getCompetitor(this.getClientNumber()).getClientIP()+",1,"+getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser()));
+        room.getCompetitor(this.clientNumber).write("go-to-room," + room.getID()+","+this.clientIP+",0,"+getStringFromUser(user));
+    }
+    
+    public void goToPartnerRoom() throws IOException{
+        write("go-to-room," + room.getID()+","+room.getCompetitor(this.getClientNumber()).getClientIP()+",0,"+getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser()));
+         room.getCompetitor(this.clientNumber).write("go-to-room,"+ room.getID()+","+this.clientIP+",1,"+getStringFromUser(user));
+    }
 
     @Override
     public void run() {
@@ -187,6 +188,50 @@ public class ServerThread implements Runnable {
                     System.out.println(res);
                     write(res);
                 }
+                //Xử lý tạo phòng
+                if (messageSplit[0].equals("create-room")) {
+                    room = new Room(this);
+
+                    write("your-created-room," + room.getID());
+                    System.out.println("Tạo phòng mới thành công");
+                     
+                    userDAO.updateToPlaying(this.user.getID());
+                }
+                //Xử lý huy phòng
+                if (messageSplit[0].equals("cancel-room")) {
+                    userDAO.updateToNotPlaying(this.user.getID());
+                    System.out.println("Đã hủy phòng");
+                    this.room = null;
+                }
+                //Xử lý xem danh sách phòng trống
+                if (messageSplit[0].equals("view-room-list")) {
+                    String res = "room-list,";
+                    int number = 1;
+                    for (ServerThread serverThread : Server.serverThreadBus.getListServerThreads()) {
+                        if(number>8) break;
+                        if (serverThread.room != null && serverThread.room.getNumberOfUser() == 1) {
+                            res += serverThread.room.getID() + "," + serverThread.room.getUser1().getUser().getNickname()+",";
+                        }
+                        number++;
+                    }
+                    write(res);
+                    System.out.println(res);
+                }
+                //Xử lý khi có người chơi thứ 2 vào phòng
+                if (messageSplit[0].equals("join-room")) {
+                    int ID_room = Integer.parseInt(messageSplit[1]);
+                    for (ServerThread serverThread : Server.serverThreadBus.getListServerThreads()) {
+                        if (serverThread.room != null && serverThread.room.getID() == ID_room) {
+                            serverThread.room.setUser2(this);
+                            this.room = serverThread.room;
+                            System.out.println("Đã vào phòng " + room.getID());
+                            room.increaseNumberOfGame();
+                            goToPartnerRoom();
+                            userDAO.updateToPlaying(this.user.getID());
+                            break;
+                        }
+                    }
+                }                
             }
 
         } catch (IOException e) {

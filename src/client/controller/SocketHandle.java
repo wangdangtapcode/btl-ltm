@@ -140,7 +140,23 @@ public class SocketHandle implements Runnable {
                     if(Client.homePageFrm!=null){
                         Client.homePageFrm.updateFriendList(getListUser(messageSplit));
                     }
-                }   
+                }
+                //Yeu cau tao phong va server tra ve
+                if(messageSplit[0].equals("your-created-room")){
+                    Client.closeAllViews();
+                    Client.openView(Client.View.WAITINGROOM);
+                    Client.waitingRoomFrm.setRoomName(messageSplit[1]);
+                }
+                //Xử lý lấy danh sách phòng
+                if(messageSplit[0].equals("room-list")){
+                    Vector<String> rooms = new Vector<>();
+                    Vector<String> nn = new Vector<>();
+                    for(int i=1; i<messageSplit.length; i=i+2){
+                        rooms.add("Room "+messageSplit[i]);
+                        nn.add(messageSplit[i+1]);
+                    }
+                    Client.roomListFrm.updateRoomList(rooms,nn);
+                }                
             }
 
         } catch (UnknownHostException e) {

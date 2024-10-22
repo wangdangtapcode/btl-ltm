@@ -89,6 +89,7 @@ public class UserDAO extends DAO {
         }
         return false;
     }
+
     public boolean checkNicknameDuplicated(String nickname) {
         try {
             PreparedStatement preparedStatement = con.prepareStatement("SELECT * FROM user WHERE nickname = ?");
@@ -145,6 +146,7 @@ public class UserDAO extends DAO {
             ex.printStackTrace();
         }
     }
+
     public boolean checkIsFriend(int ID1, int ID2) {
         try {
             PreparedStatement preparedStatement = con.prepareStatement("SELECT Friend.ID_User1\n"
@@ -159,13 +161,14 @@ public class UserDAO extends DAO {
             if (rs.next()) {
                 return true;
             }
-            
+
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return false;
     }
+
     public User getUserByNickname(String nickname) {
         try {
             PreparedStatement preparedStatement = con.prepareStatement("SELECT * FROM user\n"
@@ -184,30 +187,32 @@ public class UserDAO extends DAO {
                         (rs.getInt(8) != 0),
                         (rs.getInt(9) != 0),
                         getRank(rs.getInt(1)));
-                        
+
             }
-            
+
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
     }
+
     public boolean checkIsOnline(int ID) {
         try {
             PreparedStatement preparedStatement = con.prepareStatement("SELECT IsOnline FROM user WHERE ID = ?");
             preparedStatement.setInt(1, ID);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
-                return (rs.getInt(1)==1);
+                return (rs.getInt(1) == 1);
             }
-            
+
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return false;
     }
+
     public boolean checkNicknameMakeFriend(String nickname) {
         try {
             PreparedStatement preparedStatement = con.prepareStatement("SELECT * FROM user WHERE nickname = ?");
@@ -224,6 +229,7 @@ public class UserDAO extends DAO {
         }
         return false;
     }
+
     public void makeFriend(int ID1, int ID2) {
         try {
             PreparedStatement preparedStatement = con.prepareStatement("INSERT INTO friend(ID_User1,ID_User2)\n"
@@ -236,6 +242,7 @@ public class UserDAO extends DAO {
             ex.printStackTrace();
         }
     }
+
     public String getNickNameByID(int ID) {
         try {
             PreparedStatement preparedStatement = con.prepareStatement("SELECT user.NickName\n"
@@ -252,6 +259,7 @@ public class UserDAO extends DAO {
         }
         return null;
     }
+
     public List<User> getListFriend(int ID) {
         List<User> ListFriend = new ArrayList<>();
         try {
@@ -273,26 +281,156 @@ public class UserDAO extends DAO {
             while (rs.next()) {
                 ListFriend.add(new User(rs.getInt(1),
                         rs.getString(2),
-                        (rs.getInt(3)==1),
-                        (rs.getInt(4))==1));
+                        (rs.getInt(3) == 1),
+                        (rs.getInt(4)) == 1));
             }
-            ListFriend.sort(new Comparator<User>(){
+            ListFriend.sort(new Comparator<User>() {
                 @Override
                 public int compare(User o1, User o2) {
-                    if(o1.getIsOnline()&&!o2.getIsOnline())
+                    if (o1.getIsOnline() && !o2.getIsOnline()) {
                         return -1;
-                    if(o1.getIsPlaying()&&!o2.getIsOnline())
+                    }
+                    if (o1.getIsPlaying() && !o2.getIsOnline()) {
                         return -1;
-                    if(!o1.getIsPlaying()&&o1.getIsOnline()&&o2.getIsPlaying()&&o2.getIsOnline())
+                    }
+                    if (!o1.getIsPlaying() && o1.getIsOnline() && o2.getIsPlaying() && o2.getIsOnline()) {
                         return -1;
+                    }
                     return 0;
                 }
-                
+
             });
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return ListFriend;
+    }
+
+    public void updateToPlaying(int ID) {
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement("UPDATE user\n"
+                    + "SET IsPlaying = 1\n"
+                    + "WHERE ID = ?");
+            preparedStatement.setInt(1, ID);
+            System.out.println(preparedStatement);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void updateToNotPlaying(int ID) {
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement("UPDATE user\n"
+                    + "SET IsPlaying = 0\n"
+                    + "WHERE ID = ?");
+            preparedStatement.setInt(1, ID);
+            System.out.println(preparedStatement);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    public void addGame(int ID) {
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement("UPDATE user\n"
+                    + "SET user.NumberOfGame = ?\n"
+                    + "WHERE user.ID = ?");
+            preparedStatement.setInt(1, new UserDAO().getNumberOfGame(ID) + 1);
+            preparedStatement.setInt(2, ID);
+            System.out.println(preparedStatement);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    public void decreaseGame(int ID){
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement("UPDATE user\n"
+                    + "SET user.NumberOfGame = ?\n"
+                    + "WHERE user.ID = ?");
+            preparedStatement.setInt(1, new UserDAO().getNumberOfGame(ID) - 1);
+            preparedStatement.setInt(2, ID);
+            System.out.println(preparedStatement);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    public int getNumberOfGame(int ID) {
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement("SELECT user.NumberOfGame\n"
+                    + "FROM user\n"
+                    + "WHERE user.ID = ?");
+            preparedStatement.setInt(1, ID);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return -1;
+    }
+    public void addDrawGame(int ID){
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement("UPDATE user\n"
+                    + "SET user.NumberOfDraw = ?\n"
+                    + "WHERE user.ID = ?");
+            preparedStatement.setInt(1, new UserDAO().getNumberOfDraw(ID)+1);
+            preparedStatement.setInt(2, ID);
+            System.out.println(preparedStatement);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void addWinGame(int ID){
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement("UPDATE user\n"
+                    + "SET user.NumberOfWin = ?\n"
+                    + "WHERE user.ID = ?");
+            preparedStatement.setInt(1, new UserDAO().getNumberOfWin(ID)+1);
+            preparedStatement.setInt(2, ID);
+            System.out.println(preparedStatement);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+    public int getNumberOfWin(int ID) {
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement("SELECT user.NumberOfWin\n"
+                    + "FROM user\n"
+                    + "WHERE user.ID = ?");
+            preparedStatement.setInt(1, ID);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return -1;
+    }
+    public int getNumberOfDraw(int ID) {
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement("SELECT user.NumberOfDraw\n"
+                    + "FROM user\n"
+                    + "WHERE user.ID = ?");
+            preparedStatement.setInt(1, ID);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return -1;
     }
 }

@@ -153,7 +153,7 @@ public class HomePageFrm extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        btnTimPhong = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         btnDangXuat = new javax.swing.JButton();
@@ -297,9 +297,19 @@ public class HomePageFrm extends javax.swing.JFrame {
                 .addGap(24, 24, 24))
         );
 
-        jButton2.setText("Tìm phòng");
+        btnTimPhong.setText("Tìm phòng");
+        btnTimPhong.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTimPhongActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Tạo Phòng");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Bảng xếp hạng");
 
@@ -385,7 +395,7 @@ public class HomePageFrm extends javax.swing.JFrame {
                     .addComponent(btnDangXuat, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnTimPhong, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnMakeFriend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -402,7 +412,7 @@ public class HomePageFrm extends javax.swing.JFrame {
                     .addComponent(jButton1)))
             .addGroup(layout.createSequentialGroup()
                 .addGap(70, 70, 70)
-                .addComponent(jButton2)
+                .addComponent(btnTimPhong)
                 .addGap(32, 32, 32)
                 .addComponent(jButton3)
                 .addGap(18, 18, 18)
@@ -449,6 +459,29 @@ public class HomePageFrm extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnMakeFriendActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+
+        try {
+            Client.socketHandle.write("create-room,");
+            this.stopAllThread();
+            Client.closeView(Client.View.HOMEPAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+        }
+
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void btnTimPhongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimPhongActionPerformed
+        try {
+            Client.closeView(Client.View.HOMEPAGE);
+            this.stopAllThread();
+            Client.openView(Client.View.ROOMLIST);
+            Client.socketHandle.write("view-room-list,");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+        }
+    }//GEN-LAST:event_btnTimPhongActionPerformed
+
     private void sendMessage() {
         try {
             if (txtSendmessage.getText().isEmpty()) {
@@ -481,8 +514,8 @@ public class HomePageFrm extends javax.swing.JFrame {
     private javax.swing.JButton btnDangXuat;
     private javax.swing.JButton btnMakeFriend;
     private javax.swing.JButton btnOut;
+    private javax.swing.JButton btnTimPhong;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;

@@ -11,7 +11,8 @@ import client.view.HomePageFrm;
 import client.view.LoginFrm;
 import client.view.MakeFriendFrm;
 import client.view.RegisterFrm;
-
+import client.view.RoomListFrm;
+import client.view.WaittingRoomFrm;
 
 /**
  *
@@ -46,6 +47,8 @@ public class Client {
     public static GameNoticeFrm gameNoticeFrm;
     public static MakeFriendFrm makeFriendFrm;
     public static FriendRequestFrm friendRequestFrm;
+    public static WaittingRoomFrm waitingRoomFrm;
+    public static RoomListFrm roomListFrm;
     public static SocketHandle socketHandle;
 
     public void initView() {
@@ -74,6 +77,12 @@ public class Client {
                 case MAKEFRIEND:
                     makeFriendFrm.dispose();
                     break;
+                case WAITINGROOM:
+                    waitingRoomFrm.dispose();
+                    break;
+                case ROOMLIST:
+                    roomListFrm.dispose();
+                    break;
             }
         }
     }
@@ -97,16 +106,24 @@ public class Client {
         if (makeFriendFrm != null) {
             makeFriendFrm.dispose();
         }
+        if (waitingRoomFrm != null) {
+            waitingRoomFrm.dispose();
+        }
+        if (roomListFrm != null) {
+            roomListFrm.dispose();
+        }
     }
-    public static void openView(View viewName, int arg1, String arg2){
-        if(viewName != null){
-            switch(viewName){
+
+    public static void openView(View viewName, int arg1, String arg2) {
+        if (viewName != null) {
+            switch (viewName) {
                 case FRIENDREQUEST:
                     friendRequestFrm = new FriendRequestFrm(arg1, arg2);
                     friendRequestFrm.setVisible(true);
             }
         }
     }
+
     public static void openView(View viewName) {
         if (viewName != null) {
             switch (viewName) {
@@ -126,6 +143,15 @@ public class Client {
                     makeFriendFrm = new MakeFriendFrm();
                     makeFriendFrm.setVisible(true);
                     break;
+                case WAITINGROOM:
+                    waitingRoomFrm = new WaittingRoomFrm();
+                    waitingRoomFrm.setVisible(true);
+                    break;
+                case ROOMLIST:
+                    roomListFrm = new RoomListFrm();
+                    roomListFrm.setVisible(true);
+                    break;
+
             }
         }
     }
