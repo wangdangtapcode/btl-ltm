@@ -54,7 +54,9 @@ public class Server {
                 // Đồng thời nhận được một đối tượng Socket tại server.
                 socketOfServer = listener.accept();
                 System.out.println(socketOfServer.getInetAddress().getHostAddress());
+                System.out.println("clientNumber trc khi tao serverthread:" +clientNumber );
                 ServerThread serverThread = new ServerThread(socketOfServer, clientNumber++);
+                System.out.println("clientNumber sau khi tao serverthread:"+clientNumber);
                 serverThreadBus.add(serverThread);
                 System.out.println("Số thread đang chạy là: "+serverThreadBus.getLength());
                 executor.execute(serverThread);  

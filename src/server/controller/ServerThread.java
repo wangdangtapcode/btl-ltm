@@ -69,7 +69,7 @@ public class ServerThread implements Runnable {
         System.out.println("Server thread number " + clientNumber + " Started");
         userDAO = new UserDAO();
         isClosed = false;
-//        room = null;
+        room = null;
         //Trường hợp test máy ở server sẽ lỗi do hostaddress là localhost
         if (this.socketOfServer.getInetAddress().getHostAddress().equals("127.0.0.1")) {
             clientIP = "127.0.0.1";
@@ -120,7 +120,7 @@ public class ServerThread implements Runnable {
                         write("login-success," + getStringFromUser(user1));
                         this.user = user1;
                         userDAO.updateToOnline(this.user.getID());
-//                        Server.serverThreadBus.boardCast(clientNumber, "chat-server,"+user1.getNickname()+" đang online");
+                        Server.serverThreadBus.boardCast(clientNumber, "chat-server,"+user1.getNickname()+" đang online");
                     } else {
                         write("dupplicate-login," + messageSplit[1] + "," + messageSplit[2]);
                     }
@@ -142,8 +142,7 @@ public class ServerThread implements Runnable {
                 //Xử lý người chơi đăng xuất
                 if (messageSplit[0].equals("offline")) {
                     userDAO.updateToOffline(this.user.getID());
-//                    Server.admin.addMessage("[" + user.getID() + "] " + user.getNickname() + " đã offline");
-//                    Server.serverThreadBus.boardCast(clientNumber, "chat-server," + this.user.getNickname() + " đã offline");
+                    Server.serverThreadBus.boardCast(clientNumber, "chat-server," + this.user.getNickname() + " đã offline");
                     this.user = null;
                 }
                 //Xử lý chat toàn server
@@ -154,6 +153,7 @@ public class ServerThread implements Runnable {
                 if (messageSplit[0].equals("send-make-friend")) {
                     Boolean checknn = userDAO.checkNicknameDuplicated(messageSplit[1]);
                     User user2 = userDAO.getUserByNickname(messageSplit[1]);
+                    System.out.println(user2);
                     Boolean checkIsOnline = false;
                     if(user2 != null){
                         checkIsOnline = userDAO.checkIsOnline(user2.getID());
@@ -170,13 +170,14 @@ public class ServerThread implements Runnable {
                         write("nickname-is-friend,");
                     }else {
                     Server.serverThreadBus.getServerThreadByUserID(user2.getID())
-                            .write("make-friend-request,"+this.user.getID()+","+userDAO.getNickNameByID(this.user.getID()));
+                            .write("make-friend-request,"+this.user.getID()+","+this.user.getNickname());
                     }
                 }
                 //Xử lý xác nhận kết bạn
                 if(messageSplit[0].equals("make-friend-confirm")){
                     userDAO.makeFriend(this.user.getID(), Integer.parseInt(messageSplit[1]));
                     System.out.println("Kết bạn thành công");
+                    
                 }
                 //Xử lý xem danh sách bạn bè
                 if(messageSplit[0].equals("view-friend-list") && this.user != null){
@@ -225,9 +226,9 @@ public class ServerThread implements Runnable {
                             serverThread.room.setUser2(this);
                             this.room = serverThread.room;
                             System.out.println("Đã vào phòng " + room.getID());
-                            room.increaseNumberOfGame();
+//                            room.increaseNumberOfGame();        
+//                            userDAO.updateToPlaying(this.user.getID());
                             goToPartnerRoom();
-                            userDAO.updateToPlaying(this.user.getID());
                             break;
                         }
                     }
@@ -238,28 +239,27 @@ public class ServerThread implements Runnable {
             //Thay đổi giá trị cờ để thoát luồng
             isClosed = true;
             //Cập nhật trạng thái của user
-//            if(this.user!=null){
-//                userDAO.updateToOffline(this.user.getID());
-//                userDAO.updateToNotPlaying(this.user.getID());
-//                Server.serverThreadBus.boardCast(clientNumber, "chat-server,"+this.user.getNickname()+" đã offline");
-//                Server.admin.addMessage("["+user.getID()+"] "+user.getNickname()+" đã offline");
-//            }
-//            
-//            //remove thread khỏi bus
-//            Server.serverThreadBus.remove(clientNumber);
-//            System.out.println(this.clientNumber + " đã thoát");
-//            if (room != null) {
-//                try {
-//                    if (room.getCompetitor(clientNumber) != null) {
-//                        room.decreaseNumberOfGame();
-//                        room.getCompetitor(clientNumber).write("left-room,");
-//                        room.getCompetitor(clientNumber).room = null;
-//                    }
-//                    this.room = null;
-//                } catch (IOException ex) {
-//                    ex.printStackTrace();
-//                }
-//            }
+            if(this.user!=null){
+                userDAO.updateToOffline(this.user.getID());
+                userDAO.updateToNotPlaying(this.user.getID());
+                Server.serverThreadBus.boardCast(clientNumber, "chat-server,"+this.user.getNickname()+" đã offline");
+            }
+            
+            //remove thread khỏi bus
+            Server.serverThreadBus.remove(clientNumber);
+            System.out.println(this.clientNumber + " đã thoát");
+            if (room != null) {
+                try {
+                    if (room.getCompetitor(clientNumber) != null) {
+                        room.decreaseNumberOfGame();
+                        room.getCompetitor(clientNumber).write("left-room,");
+                        room.getCompetitor(clientNumber).room = null;
+                    }
+                    this.room = null;
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
 
         }
     }

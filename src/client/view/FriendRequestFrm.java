@@ -34,7 +34,7 @@ public class FriendRequestFrm extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         jLabel7.setText("Từ "+nickname);
         timer = new Timer(1000, new ActionListener() {
-            int count = 10;
+            int count = 30;
 
             @Override
             public void actionPerformed(ActionEvent e) {

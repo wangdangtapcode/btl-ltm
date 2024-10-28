@@ -119,7 +119,7 @@ public class MakeFriendFrm extends javax.swing.JFrame {
             if (nickname.isEmpty()) {
                 throw new Exception("Vui lòng nhập nickname");
             }
-            this.dispose();
+            txtNickname.setText("");
             Client.socketHandle.write("send-make-friend," + nickname + "," + Client.user.getID());
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(rootPane, ex.getMessage());

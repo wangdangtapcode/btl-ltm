@@ -38,16 +38,18 @@ public class SocketHandle implements Runnable {
                 Integer.parseInt(message[start + 6]),
                 Integer.parseInt(message[start + 7]));
     }
-    public List<User> getListUser(String[] message){
+
+    public List<User> getListUser(String[] message) {
         List<User> friend = new ArrayList<>();
-        for(int i=1; i<message.length; i=i+4){
+        for (int i = 1; i < message.length; i = i + 4) {
             friend.add(new User(Integer.parseInt(message[i]),
-                    message[i+1],
-                    message[i+2].equals("1"),
-                    message[i+3].equals("1")));
+                    message[i + 1],
+                    message[i + 2].equals("1"),
+                    message[i + 3].equals("1")));
         }
         return friend;
     }
+
     @Override
     public void run() {
 
@@ -110,53 +112,86 @@ public class SocketHandle implements Runnable {
                     Client.loginFrm.showError("Tài khoản đã đăng nhập ở nơi khác");
                 }
                 //Xử lý nhận thông tin, chat từ toàn server
-                if(messageSplit[0].equals("chat-server")){
-                    if(Client.homePageFrm!=null){
+                if (messageSplit[0].equals("chat-server")) {
+                    if (Client.homePageFrm != null) {
                         Client.homePageFrm.addMessage(messageSplit[1]);
                     }
                 }
                 //Xử lý khong tim thay nickname khi ket ban
-                if(messageSplit[0].equals("unavailable-nickname")){
+                if (messageSplit[0].equals("unavailable-nickname")) {
                     Client.openView(Client.View.MAKEFRIEND);
                     Client.makeFriendFrm.showError("Nickname khong ton tai");
                 }
                 //Xử lý khong online khi ket ban
-                if(messageSplit[0].equals("not-online")){
+                if (messageSplit[0].equals("not-online")) {
                     Client.openView(Client.View.MAKEFRIEND);
                     Client.makeFriendFrm.showError("Nickname khong online");
                 }
                 //Xử lý da la ban khi ket ban
-                if(messageSplit[0].equals("nickname-is-friend")){
+                if (messageSplit[0].equals("nickname-is-friend")) {
                     Client.openView(Client.View.MAKEFRIEND);
                     Client.makeFriendFrm.showError("Nickname da la ban");
                 }
                 //Xử lý yêu cầu kết bạn tới
-                if(messageSplit[0].equals("make-friend-request")){
+                if (messageSplit[0].equals("make-friend-request")) {
                     int ID = Integer.parseInt(messageSplit[1]);
                     String nickname = messageSplit[2];
                     Client.openView(Client.View.FRIENDREQUEST, ID, nickname);
                 }
-                if(messageSplit[0].equals("return-friend-list")){
-                    if(Client.homePageFrm!=null){
+                if (messageSplit[0].equals("return-friend-list")) {
+                    if (Client.homePageFrm != null) {
                         Client.homePageFrm.updateFriendList(getListUser(messageSplit));
                     }
                 }
                 //Yeu cau tao phong va server tra ve
-                if(messageSplit[0].equals("your-created-room")){
+                if (messageSplit[0].equals("your-created-room")) {
                     Client.closeAllViews();
                     Client.openView(Client.View.WAITINGROOM);
                     Client.waitingRoomFrm.setRoomName(messageSplit[1]);
                 }
                 //Xử lý lấy danh sách phòng
-                if(messageSplit[0].equals("room-list")){
+                if (messageSplit[0].equals("room-list")) {
                     Vector<String> rooms = new Vector<>();
                     Vector<String> nn = new Vector<>();
-                    for(int i=1; i<messageSplit.length; i=i+2){
-                        rooms.add("Room "+messageSplit[i]);
-                        nn.add(messageSplit[i+1]);
+                    for (int i = 1; i < messageSplit.length; i = i + 2) {
+                        rooms.add("Room " + messageSplit[i]);
+                        nn.add(messageSplit[i + 1]);
                     }
-                    Client.roomListFrm.updateRoomList(rooms,nn);
-                }                
+                    Client.roomListFrm.updateRoomList(rooms, nn);
+                }
+                if (messageSplit[0].equals("go-to-room")) {
+                    System.out.println("Vào phòng");
+                    int roomID = Integer.parseInt(messageSplit[1]);
+                    String competitorIP = messageSplit[2];
+                    int isKey = Integer.parseInt(messageSplit[3]);
+
+                    User competitor = getUserFromString(4, messageSplit);
+//                    if (Client.findRoomFrm != null) {
+//                        Client.findRoomFrm.showFindedRoom();
+//                        try {
+//                            Thread.sleep(3000);
+//                        } catch (InterruptedException ex) {
+//                            JOptionPane.showMessageDialog(Client.findRoomFrm, "Lỗi khi sleep thread");
+//                        }
+//                    } else 
+                    if (Client.waitingRoomFrm != null) {
+                        Client.waitingRoomFrm.showFindedCompetitor();
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException ex) {
+                            JOptionPane.showMessageDialog(Client.waitingRoomFrm, "Lỗi khi sleep thread");
+                        }
+                    }
+//                    Client.closeAllViews();
+                    System.out.println("Đã vào phòng: " + roomID);
+//                    //Xử lý vào phòng
+//                    Client.openView(Client.View.GAMECLIENT,
+//                            competitor,
+//                            roomID,
+//                            isStart,
+//                            competitorIP);
+//                    Client.gameClientFrm.newgame();
+                }
             }
 
         } catch (UnknownHostException e) {

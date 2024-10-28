@@ -59,7 +59,7 @@ public class RoomListFrm extends javax.swing.JFrame {
                 while (Client.roomListFrm.isDisplayable() && isPlayThread && !isFiltered) {
                     try {
                         Client.socketHandle.write("view-room-list,");
-                        Thread.sleep(500);
+                        Thread.sleep(60000);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(rootPane, ex.getMessage());
                     } catch (InterruptedException ex) {
@@ -177,24 +177,25 @@ public class RoomListFrm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        isPlayThread = false;
         Client.closeView(Client.View.ROOMLIST);
         Client.openView(Client.View.HOMEPAGE);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
-//        if (jTable2.getSelectedRow() == -1) {
-//        } else {
-//            try {
-//                isPlayThread = false;
-//                int index = jTable2.getSelectedRow();
-//                int room = Integer.parseInt(listRoom.get(index).split(" ")[1]);
-//                Client.socketHandle.write("join-room," + room);
-//                Client.closeView(Client.View.ROOMLIST);
-//
-//            } catch (IOException ex) {
-//                JOptionPane.showMessageDialog(rootPane, ex.getMessage());
-//            }
-//        }
+        if (jTable2.getSelectedRow() == -1) {
+        } else {
+            try {
+                isPlayThread = false;
+                int index = jTable2.getSelectedRow();
+                int room = Integer.parseInt(listRoom.get(index).split(" ")[1]);
+                Client.socketHandle.write("join-room," + room);
+                Client.closeView(Client.View.ROOMLIST);
+
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+            }
+        }
     }//GEN-LAST:event_jTable2MouseClicked
 
     /**

@@ -88,7 +88,7 @@ public class HomePageFrm extends javax.swing.JFrame {
                     try {
                         System.out.println("Xem danh sách bạn bè đang chạy!");
                         requestUpdate();
-                        Thread.sleep(500);
+                        Thread.sleep(60000);
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
