@@ -204,7 +204,7 @@ public class ServerThread implements Runnable {
                     System.out.println("Đã hủy phòng");
                     this.room = null;
                 }
-                //Xử lý xem danh sách phòng trống
+                //Xử lý xem danh sách phòng 
                 if (messageSplit[0].equals("view-room-list")) {
                     String res = "room-list,";
                     int number = 1;
@@ -218,6 +218,16 @@ public class ServerThread implements Runnable {
                     write(res);
                     System.out.println(res);
                 }
+                //Xử lý lấy danh sách bảng xếp hạng
+                if(messageSplit[0].equals("get-rank-charts")){
+                    List<User> ranks = userDAO.getUserStaticRank();
+                    String res = "return-get-rank-charts,";
+                    for(User user : ranks){
+                        res += getStringFromUser(user)+",";
+                    }
+                    System.out.println(res);
+                    write(res);
+                }                
                 //Xử lý khi có người chơi thứ 2 vào phòng
                 if (messageSplit[0].equals("join-room")) {
                     int ID_room = Integer.parseInt(messageSplit[1]);

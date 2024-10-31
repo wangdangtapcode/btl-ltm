@@ -433,4 +433,32 @@ public class UserDAO extends DAO {
         }
         return -1;
     }
+    public List<User> getUserStaticRank() {
+        List<User> list = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = con.prepareStatement("SELECT *\n"
+                    + "FROM user\n"
+                    + "ORDER BY(user.NumberOfGame+user.numberOfDraw*5+user.NumberOfWin*10) DESC\n"
+                    + "LIMIT 8");
+            System.out.println(preparedStatement);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                list.add(new User(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getInt(5),
+                        rs.getInt(6),
+                        rs.getInt(7),
+                        (rs.getInt(8) != 0),
+                        (rs.getInt(9) != 0),
+                        getRank(rs.getInt(1))));
+            }
+            
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

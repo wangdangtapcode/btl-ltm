@@ -5,16 +5,21 @@
 package client.view;
 
 import client.controller.Client;
+import client.model.User;
+import java.awt.Color;
 import java.io.IOException;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
+
 /**
  *
  * @author quang
  */
 public class WaittingRoomFrm extends javax.swing.JFrame {
+
     private boolean isOpenning;
+    private User DoiThu;
     /**
      * Creates new form WaittingRoomFrm
      */
@@ -32,11 +37,35 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
         jLabel3.setIcon(new ImageIcon(getClass().getResource("/assets/icon/loading3.gif")));
 //        jButton2.setIcon(new ImageIcon("assets/icon/door_exit.png"));
     }
-    public void setRoomName(String roomName){
-        jLabel1.setText("Room "+roomName +" của " + Client.user.getNickname());
+
+    public User getDoiThu() {
+        return DoiThu;
+    }
+
+    public void setDoiThu(User DoiThu) {
+        this.DoiThu = DoiThu;
+    }
+
+    public void setRoomName(String roomName) {
+        jLabel1.setText("Room " + roomName + " của " + Client.user.getNickname());
         lblKey.setText(Client.user.getNickname());
     }
 
+    public void HaveJoin() {
+        isOpenning = true;
+        jLabel3.setVisible(false);
+        jLabel2.setText("Đã tìm thấy đối thủ");
+        btnStart.setVisible(true);
+        btnDoiThu.setVisible(true);
+        lblDoithu.setText(DoiThu.getNickname());
+    }
+    public void Join() {
+        isOpenning = true;
+        jLabel3.setVisible(false);
+        jLabel2.setText("Đã tìm thấy đối thủ");
+        btnDoiThu.setVisible(true);
+        lblDoithu.setText(DoiThu.getNickname());
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -180,14 +209,18 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
-        if(isOpenning) return;
-        try {
-            Client.closeView(Client.View.WAITINGROOM);
-            Client.openView(Client.View.HOMEPAGE);
-            Client.socketHandle.write("cancel-room,");
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+        if (isOpenning) {
+            try {
+                Client.closeView(Client.View.WAITINGROOM);
+                Client.openView(Client.View.HOMEPAGE);
+                Client.socketHandle.write("cancel-room,");
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+            }
+        } else {
+
         }
+
     }//GEN-LAST:event_btnBackActionPerformed
 
     /**

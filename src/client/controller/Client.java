@@ -5,6 +5,7 @@
 package client.controller;
 
 import client.model.User;
+import client.view.BXHFrm;
 import client.view.FriendRequestFrm;
 import client.view.GameNoticeFrm;
 import client.view.HomePageFrm;
@@ -49,6 +50,7 @@ public class Client {
     public static FriendRequestFrm friendRequestFrm;
     public static WaittingRoomFrm waitingRoomFrm;
     public static RoomListFrm roomListFrm;
+    public static BXHFrm bxhFrm;
     public static SocketHandle socketHandle;
 
     public void initView() {
@@ -83,6 +85,9 @@ public class Client {
                 case ROOMLIST:
                     roomListFrm.dispose();
                     break;
+                case RANK:
+                    bxhFrm.dispose();
+                    break;
             }
         }
     }
@@ -112,6 +117,7 @@ public class Client {
         if (roomListFrm != null) {
             roomListFrm.dispose();
         }
+        if(bxhFrm!=null) bxhFrm.dispose();
     }
 
     public static void openView(View viewName, int arg1, String arg2) {
@@ -150,6 +156,10 @@ public class Client {
                 case ROOMLIST:
                     roomListFrm = new RoomListFrm();
                     roomListFrm.setVisible(true);
+                    break;
+                case RANK:
+                    bxhFrm = new BXHFrm();
+                    bxhFrm.setVisible(true);
                     break;
 
             }

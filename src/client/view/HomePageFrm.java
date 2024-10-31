@@ -312,6 +312,11 @@ public class HomePageFrm extends javax.swing.JFrame {
         });
 
         jButton4.setText("Bảng xếp hạng");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         btnDangXuat.setText("Đăng xuất");
         btnDangXuat.addActionListener(new java.awt.event.ActionListener() {
@@ -481,6 +486,10 @@ public class HomePageFrm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(rootPane, ex.getMessage());
         }
     }//GEN-LAST:event_btnTimPhongActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        Client.openView(Client.View.RANK);
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     private void sendMessage() {
         try {

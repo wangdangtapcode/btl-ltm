@@ -49,7 +49,20 @@ public class SocketHandle implements Runnable {
         }
         return friend;
     }
-
+    public List<User> getListRank(String[] message){
+        List<User> friend = new ArrayList<>();
+        for(int i=1; i<message.length; i=i+8){
+            friend.add(new User(Integer.parseInt(message[i]),
+                message[i+1],
+                message[i+2],
+                message[i+3],
+                Integer.parseInt(message[i+4]),
+                Integer.parseInt(message[i+5]),
+                Integer.parseInt(message[i+6]),
+                Integer.parseInt(message[i+7])));
+        }
+        return friend;
+    }
     @Override
     public void run() {
 
@@ -159,6 +172,12 @@ public class SocketHandle implements Runnable {
                     }
                     Client.roomListFrm.updateRoomList(rooms, nn);
                 }
+                //Xử lý xem rank
+                if(messageSplit[0].equals("return-get-rank-charts")){
+                    if(Client.bxhFrm!=null){
+                        Client.bxhFrm.setDataToTable(getListRank(messageSplit));
+                    }
+                }
                 if (messageSplit[0].equals("go-to-room")) {
                     System.out.println("Vào phòng");
                     int roomID = Integer.parseInt(messageSplit[1]);
@@ -166,21 +185,14 @@ public class SocketHandle implements Runnable {
                     int isKey = Integer.parseInt(messageSplit[3]);
 
                     User competitor = getUserFromString(4, messageSplit);
-//                    if (Client.findRoomFrm != null) {
-//                        Client.findRoomFrm.showFindedRoom();
-//                        try {
-//                            Thread.sleep(3000);
-//                        } catch (InterruptedException ex) {
-//                            JOptionPane.showMessageDialog(Client.findRoomFrm, "Lỗi khi sleep thread");
-//                        }
-//                    } else 
                     if (Client.waitingRoomFrm != null) {
-                        Client.waitingRoomFrm.showFindedCompetitor();
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException ex) {
-                            JOptionPane.showMessageDialog(Client.waitingRoomFrm, "Lỗi khi sleep thread");
-                        }
+                        Client.waitingRoomFrm.setDoiThu(competitor);
+                        Client.waitingRoomFrm.Join();
+                    } else {
+                        Client.closeAllViews();
+                        Client.openView(Client.View.WAITINGROOM);
+                        Client.waitingRoomFrm.setDoiThu(competitor);
+                        Client.waitingRoomFrm.setRoomName(competitor.getNickname());
                     }
 //                    Client.closeAllViews();
                     System.out.println("Đã vào phòng: " + roomID);
