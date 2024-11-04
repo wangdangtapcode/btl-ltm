@@ -59,7 +59,7 @@ public class RoomListFrm extends javax.swing.JFrame {
                 while (Client.roomListFrm.isDisplayable() && isPlayThread && !isFiltered) {
                     try {
                         Client.socketHandle.write("view-room-list,");
-                        Thread.sleep(60000);
+                        Thread.sleep(5000);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(rootPane, ex.getMessage());
                     } catch (InterruptedException ex) {

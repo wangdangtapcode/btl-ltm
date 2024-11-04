@@ -16,6 +16,7 @@ import client.view.RegisterFrm;
 import client.view.RoomListFrm;
 import client.view.ThongtinDoiThuFrm;
 import client.view.WaittingRoomFrm;
+import javax.swing.JFrame;
 
 /**
  *
@@ -57,7 +58,14 @@ public class Client {
     public static GameFrm gameFrm;
  
     public static SocketHandle socketHandle;
-
+    public static JFrame getVisibleJFrame(){
+        if(roomListFrm!=null&&roomListFrm.isVisible())
+            return roomListFrm;
+        if(bxhFrm!=null&&bxhFrm.isVisible()){
+            return bxhFrm;
+        }
+        return homePageFrm;
+    }
     public void initView() {
 
         loginFrm = new LoginFrm();

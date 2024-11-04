@@ -54,7 +54,6 @@ public class HomePageFrm extends javax.swing.JFrame {
         } else {
             jLabel11.setText("" + Client.user.getRank());
         }
-//        defaultTableModel = (DefaultTableModel) jTable2.getModel();
         isClicked = false;
         Object[][] rows = {};
         String[] columns = {"Nickname", "status"};
@@ -88,7 +87,7 @@ public class HomePageFrm extends javax.swing.JFrame {
                     try {
                         System.out.println("Xem danh sách bạn bè đang chạy!");
                         requestUpdate();
-                        Thread.sleep(60000);
+                        Thread.sleep(5000);
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
@@ -339,6 +338,12 @@ public class HomePageFrm extends javax.swing.JFrame {
         jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel13.setText("DANH SÁCH BẠN BÈ");
 
+        jScrollPane3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jScrollPane3MouseClicked(evt);
+            }
+        });
+
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -350,6 +355,11 @@ public class HomePageFrm extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jTable2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable2MouseClicked(evt);
+            }
+        });
         jScrollPane3.setViewportView(jTable2);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -490,6 +500,40 @@ public class HomePageFrm extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         Client.openView(Client.View.RANK);
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jScrollPane3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jScrollPane3MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jScrollPane3MouseClicked
+
+    private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
+        try {
+            if(jTable2.getSelectedRow()==-1) return;
+            User friend = listFriend.get(jTable2.getSelectedRow());
+            if(!friend.isIsOnline()){
+                throw new Exception("Người chơi không online");
+            }
+            if(friend.isIsPlaying()){
+                throw new Exception("Người chơi đang trong trận đấu");
+            }
+            isClicked = true;
+            int res = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn thách đấu người bạn này không", "Xác nhận thách đầu", JOptionPane.YES_NO_OPTION);
+            if(res == JOptionPane.YES_OPTION){
+                Client.closeAllViews();
+                Client.openView(Client.View.GAMENOTICE, "Thách đấu", "Đang chờ phản hồi từ đối thủ");
+                Client.socketHandle.write("duel-request,"+friend.getID());
+            }
+            else{
+                isClicked = false;
+                startThread();
+            }
+
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+        }
+    }//GEN-LAST:event_jTable2MouseClicked
 
     private void sendMessage() {
         try {
