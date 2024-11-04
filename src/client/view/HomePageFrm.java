@@ -47,7 +47,7 @@ public class HomePageFrm extends javax.swing.JFrame {
         if (Client.user.getNumberOfGame() == 0) {
             jLabel12.setText("-");
         } else {
-            jLabel12.setText("" + (Client.user.getNumberOfGame() + Client.user.getNumberOfwin() * 10));
+            jLabel12.setText("" + (Client.user.getNumberOfGame()+Client.user.getNumberOfDraw() + Client.user.getNumberOfwin() * 5 ));
         }
         if (Client.user.getNumberOfGame() == 0) {
             jLabel11.setText("-");

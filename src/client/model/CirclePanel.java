@@ -107,5 +107,9 @@ public class CirclePanel extends JPanel {
             }
         }
     }
+
+    public ArrayList<WheatAndRice> getGrains() {
+        return grains;
+    }
 }
 

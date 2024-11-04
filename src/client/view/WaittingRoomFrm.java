@@ -7,19 +7,24 @@ package client.view;
 import client.controller.Client;
 import client.model.User;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 /**
  *
  * @author quang
  */
+
 public class WaittingRoomFrm extends javax.swing.JFrame {
 
     private boolean isOpenning;
     private User DoiThu;
+    private String roomID;
     /**
      * Creates new form WaittingRoomFrm
      */
@@ -28,7 +33,6 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
         this.setTitle(" Game ");
         btnStart.setVisible(false);
         btnDoiThu.setVisible(false);
-        lblKey.setVisible(false);
         lblDoithu.setVisible(false);
         isOpenning = false;
         this.setResizable(false);
@@ -47,10 +51,15 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
     }
 
     public void setRoomName(String roomName) {
+        this.roomID = roomName;
         jLabel1.setText("Room " + roomName + " của " + Client.user.getNickname());
         lblKey.setText(Client.user.getNickname());
     }
-
+    public void setRoomNameDoiThu(String roomName, String name) {
+        this.roomID = roomName;
+        jLabel1.setText("Room " + roomName + " của " + name);
+        lblKey.setText(name);
+    }
     public void HaveJoin() {
         isOpenning = true;
         jLabel3.setVisible(false);
@@ -58,13 +67,15 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
         btnStart.setVisible(true);
         btnDoiThu.setVisible(true);
         lblDoithu.setText(DoiThu.getNickname());
+        lblDoithu.setVisible(true);
     }
     public void Join() {
         isOpenning = true;
         jLabel3.setVisible(false);
         jLabel2.setText("Đã tìm thấy đối thủ");
         btnDoiThu.setVisible(true);
-        lblDoithu.setText(DoiThu.getNickname());
+        lblDoithu.setText(Client.user.getNickname());
+        lblDoithu.setVisible(true);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -151,8 +162,18 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
         });
 
         btnStart.setText("Bắt đầu");
+        btnStart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStartActionPerformed(evt);
+            }
+        });
 
         btnDoiThu.setText("Thông tin đối thủ");
+        btnDoiThu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDoiThuActionPerformed(evt);
+            }
+        });
 
         lblDoithu.setText("{Doithu}");
 
@@ -179,9 +200,9 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(48, 48, 48)
                 .addComponent(lblKey, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(77, 77, 77)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(88, 88, 88)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblDoithu, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32))
         );
@@ -207,9 +228,19 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    public void started() {
+        Timer timer = new Timer(3000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Hiện thông báo khi timer kết thúc
+                JOptionPane.showMessageDialog(rootPane, "Trận đấu đang bắt đầu!");
+            }
+        });
+        timer.setRepeats(false); // Chỉ chạy một lần
+        timer.start(); // Bắt đầu timer   
+}
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
-        if (isOpenning) {
+        if (!isOpenning) {
             try {
                 Client.closeView(Client.View.WAITINGROOM);
                 Client.openView(Client.View.HOMEPAGE);
@@ -218,10 +249,29 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(rootPane, ex.getMessage());
             }
         } else {
-
+            if (lblKey.getText().equals(DoiThu.getNickname())) {
+                System.out.println("toi roi phong");
+            } else {
+                System.out.println("doi thu roi phong");
+            }
         }
 
     }//GEN-LAST:event_btnBackActionPerformed
+
+    private void btnDoiThuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDoiThuActionPerformed
+        Client.openView(Client.View.COMPETITORINFO, DoiThu);
+    }//GEN-LAST:event_btnDoiThuActionPerformed
+
+    private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
+        if (isOpenning) {
+            try {
+                Client.socketHandle.write("start-room," + this.roomID);
+                Client.closeView(Client.View.WAITINGROOM);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+            }
+        }
+    }//GEN-LAST:event_btnStartActionPerformed
 
     /**
      * @param args the command line arguments

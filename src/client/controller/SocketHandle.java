@@ -49,20 +49,22 @@ public class SocketHandle implements Runnable {
         }
         return friend;
     }
-    public List<User> getListRank(String[] message){
+
+    public List<User> getListRank(String[] message) {
         List<User> friend = new ArrayList<>();
-        for(int i=1; i<message.length; i=i+8){
+        for (int i = 1; i < message.length; i = i + 8) {
             friend.add(new User(Integer.parseInt(message[i]),
-                message[i+1],
-                message[i+2],
-                message[i+3],
-                Integer.parseInt(message[i+4]),
-                Integer.parseInt(message[i+5]),
-                Integer.parseInt(message[i+6]),
-                Integer.parseInt(message[i+7])));
+                    message[i + 1],
+                    message[i + 2],
+                    message[i + 3],
+                    Integer.parseInt(message[i + 4]),
+                    Integer.parseInt(message[i + 5]),
+                    Integer.parseInt(message[i + 6]),
+                    Integer.parseInt(message[i + 7])));
         }
         return friend;
     }
+
     @Override
     public void run() {
 
@@ -173,8 +175,8 @@ public class SocketHandle implements Runnable {
                     Client.roomListFrm.updateRoomList(rooms, nn);
                 }
                 //Xử lý xem rank
-                if(messageSplit[0].equals("return-get-rank-charts")){
-                    if(Client.bxhFrm!=null){
+                if (messageSplit[0].equals("return-get-rank-charts")) {
+                    if (Client.bxhFrm != null) {
                         Client.bxhFrm.setDataToTable(getListRank(messageSplit));
                     }
                 }
@@ -187,12 +189,14 @@ public class SocketHandle implements Runnable {
                     User competitor = getUserFromString(4, messageSplit);
                     if (Client.waitingRoomFrm != null) {
                         Client.waitingRoomFrm.setDoiThu(competitor);
-                        Client.waitingRoomFrm.Join();
+                        Client.waitingRoomFrm.HaveJoin();
                     } else {
+
                         Client.closeAllViews();
                         Client.openView(Client.View.WAITINGROOM);
                         Client.waitingRoomFrm.setDoiThu(competitor);
-                        Client.waitingRoomFrm.setRoomName(competitor.getNickname());
+                        Client.waitingRoomFrm.setRoomNameDoiThu(roomID + "", competitor.getNickname());
+                        Client.waitingRoomFrm.Join();
                     }
 //                    Client.closeAllViews();
                     System.out.println("Đã vào phòng: " + roomID);
@@ -204,16 +208,91 @@ public class SocketHandle implements Runnable {
 //                            competitorIP);
 //                    Client.gameClientFrm.newgame();
                 }
+                // co nguoi out dot ngot khi dang choi game 
+                if (messageSplit[0].equals("left-room")) {
+                    Client.gameFrm.stopTimer();
+                    Client.closeAllViews();
+                    Client.openView(Client.View.GAMENOTICE, "Đối thủ đã thoát khỏi phòng", "Đang trở về trang chủ");
+                    Thread.sleep(3000);
+                    Client.closeAllViews();
+                    Client.openView(Client.View.HOMEPAGE);
+                }
+                // bat dau game
+                if (messageSplit[0].equals("go-to-game")) {
+                    System.out.println("Vào Game");
+                    int roomID = Integer.parseInt(messageSplit[1]);
+                    String competitorIP = messageSplit[2];
+                    int isKey = Integer.parseInt(messageSplit[3]);
+
+                    User competitor = getUserFromString(4, messageSplit);
+                    if (isKey == 0) { // la key
+                        Client.closeAllViews();
+                        Client.openView(Client.View.GAMECLIENT, competitor, roomID, isKey);
+                        Client.gameFrm.newgame();
+                    } else {
+                        Client.closeAllViews();
+                        Client.openView(Client.View.GAMECLIENT, competitor, roomID, isKey);
+                        Client.gameFrm.newgame();
+                    }
+                }
+                // mot nguoi xong
+                if (messageSplit[0].equals("doithu-xong")) {
+
+                    if (Client.gameFrm.getIsDone()) {
+                        Client.closeView(Client.View.GAMENOTICE);
+                        String ketqua = "";
+                        int diemDoiThu = Integer.parseInt(messageSplit[1]);
+                        Client.gameFrm.setDiemDoithu(diemDoiThu);
+                        if (Client.gameFrm.getDiemDoithu() == Client.gameFrm.tongDiem()) {
+                            ketqua = "draw";
+                        } else if (Client.gameFrm.getDiemDoithu() < Client.gameFrm.tongDiem()) {
+                            ketqua = "win";
+                        } else {
+                            ketqua = "lose";
+                        }
+                        if (!ketqua.isEmpty()) {
+                            if(ketqua.equals("win")){
+                                Client.gameFrm.guiKQ("lose");
+                            }else if(ketqua.equals("draw")){
+                                Client.gameFrm.guiKQ("draw");
+                            }else{
+                                Client.gameFrm.guiKQ("win");
+                            }
+                            Client.gameFrm.ketQua(ketqua);
+
+                        }
+                    } else {
+                        int diemDoiThu = Integer.parseInt(messageSplit[1]);
+                        Client.gameFrm.setDiemDoithu(diemDoiThu);
+                        Client.gameFrm.chuaXong();
+                    }
+                }
+                //
+                if (messageSplit[0].equals("doithu-chua-xong")) {
+                    Client.openView(Client.View.GAMENOTICE, "Đối thủ chưa xong", "Đang đợi dối thủ");
+                }
+                // 
+                if (messageSplit[0].equals("tro-ve-home")) {
+                    Client.closeAllViews();
+                    Client.openView(Client.View.GAMENOTICE, "Trận đấu đã xong", "Đang trở về trang chủ");
+                    Thread.sleep(3000);
+                    Client.closeAllViews();
+                    Client.openView(Client.View.HOMEPAGE);
+                }
+                //
+                if (messageSplit[0].equals("tra-ket-qua")) {
+                    String rs = messageSplit[1];
+                    Client.gameFrm.ketQua(rs);
+                }
             }
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
         }
-//        } catch (InterruptedException ex) {
-//            ex.printStackTrace();
-//        }
     }
 
     public void write(String message) throws IOException {

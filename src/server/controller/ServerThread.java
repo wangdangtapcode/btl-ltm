@@ -41,9 +41,9 @@ public class ServerThread implements Runnable {
         return os;
     }
 
-//    public void setRoom(Room room) {
-//        this.room = room;
-//    }
+    public void setRoom(Room room) {
+        this.room = room;
+    }
     public int getClientNumber() {
         return clientNumber;
     }
@@ -52,15 +52,19 @@ public class ServerThread implements Runnable {
         return user;
     }
 
-//    public Room getRoom() {
-//        return room;
-//    }
+    public Room getRoom() {
+        return room;
+    }
     public String getClientIP() {
         return clientIP;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public UserDAO getUserDAO() {
+        return userDAO;
     }
 
     public ServerThread(Socket socketOfServer, int clientNumber) {
@@ -93,6 +97,10 @@ public class ServerThread implements Runnable {
     public void goToPartnerRoom() throws IOException{
         write("go-to-room," + room.getID()+","+room.getCompetitor(this.getClientNumber()).getClientIP()+",0,"+getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser()));
          room.getCompetitor(this.clientNumber).write("go-to-room,"+ room.getID()+","+this.clientIP+",1,"+getStringFromUser(user));
+    }
+    public void goToGame() throws IOException{
+        write("go-to-game," + room.getID()+","+room.getCompetitor(this.getClientNumber()).getClientIP()+",0,"+getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser()));
+         room.getCompetitor(this.clientNumber).write("go-to-game,"+ room.getID()+","+this.clientIP+",1,"+getStringFromUser(user));
     }
 
     @Override
@@ -196,11 +204,11 @@ public class ServerThread implements Runnable {
                     write("your-created-room," + room.getID());
                     System.out.println("Tạo phòng mới thành công");
                      
-                    userDAO.updateToPlaying(this.user.getID());
+//                    userDAO.updateToPlaying(this.user.getID());
                 }
                 //Xử lý huy phòng
                 if (messageSplit[0].equals("cancel-room")) {
-                    userDAO.updateToNotPlaying(this.user.getID());
+//                    userDAO.updateToNotPlaying(this.user.getID());
                     System.out.println("Đã hủy phòng");
                     this.room = null;
                 }
@@ -227,7 +235,7 @@ public class ServerThread implements Runnable {
                     }
                     System.out.println(res);
                     write(res);
-                }                
+                }              
                 //Xử lý khi có người chơi thứ 2 vào phòng
                 if (messageSplit[0].equals("join-room")) {
                     int ID_room = Integer.parseInt(messageSplit[1]);
@@ -242,7 +250,58 @@ public class ServerThread implements Runnable {
                             break;
                         }
                     }
+                }
+//                //Xử lý huy phòng khi tham gia phong
+//                if (messageSplit[0].equals("cancel-room-doithu")) {
+////                    userDAO.updateToNotPlaying(this.user.getID());
+//                    System.out.println("Đã hủy phòng");
+//                    this.room = null;
+//                }  
+                if (messageSplit[0].equals("start-room")) {
+                    int ID_room = Integer.parseInt(messageSplit[1]);
+                    for (ServerThread serverThread : Server.serverThreadBus.getListServerThreads()) {
+                        if (serverThread.room.getID() == ID_room) {
+                            room.increaseNumberOfGame();
+                            room.setUsersToPlaying();   
+                            goToGame();
+                            break;
+                        }
+                    }
+                }
+                // mot nguoi bam da xong
+                if (messageSplit[0].equals("done")) {
+                    int diem = Integer.parseInt(messageSplit[1]);
+                    room.getCompetitor(clientNumber).write("doithu-xong,"+diem);
+                }
+                //Doi thu chua xong
+                if (messageSplit[0].equals("chua-xong")) {
+                    room.getCompetitor(clientNumber).write("doithu-chua-xong,");
+                }
+                // duoc gui ket qua
+                if (messageSplit[0].equals("gui-ket-qua")) {
+                    String rs = messageSplit[1];
+                    room.getCompetitor(clientNumber).write("tra-ket-qua,"+rs);
                 }                
+                //win
+                if(messageSplit[0].equals("win")){
+                    userDAO.addWinGame(this.user.getID());
+                    userDAO.updateToNotPlaying(this.user.getID());
+                    this.room=null;
+                    write("tro-ve-home,");
+                }
+                //draw
+                if(messageSplit[0].equals("draw")){
+                    userDAO.addDrawGame(this.user.getID());
+                    userDAO.updateToNotPlaying(this.user.getID());
+                    this.room=null;
+                    write("tro-ve-home,");
+                }                
+                //lose
+                if(messageSplit[0].equals("lose")){
+                    userDAO.updateToNotPlaying(this.user.getID());
+                    this.room=null;
+                    write("tro-ve-home,");
+                }
             }
 
         } catch (IOException e) {
@@ -258,12 +317,16 @@ public class ServerThread implements Runnable {
             //remove thread khỏi bus
             Server.serverThreadBus.remove(clientNumber);
             System.out.println(this.clientNumber + " đã thoát");
+            ServerThread DoiThu = room.getCompetitor(clientNumber);
             if (room != null) {
                 try {
-                    if (room.getCompetitor(clientNumber) != null) {
+                    if (DoiThu != null && DoiThu.getUserDAO().getUserByNickname(DoiThu.getUser().getNickname()).getIsPlaying()) {
                         room.decreaseNumberOfGame();
                         room.getCompetitor(clientNumber).write("left-room,");
+                        DoiThu.getUserDAO().updateToNotPlaying(clientNumber);
                         room.getCompetitor(clientNumber).room = null;
+                    }else if(DoiThu != null && !DoiThu.getUserDAO().getUserByNickname(DoiThu.getUser().getNickname()).getIsPlaying()){
+                        
                     }
                     this.room = null;
                 } catch (IOException ex) {

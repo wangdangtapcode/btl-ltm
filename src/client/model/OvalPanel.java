@@ -26,15 +26,16 @@ public class OvalPanel extends JPanel {
         setPreferredSize(new Dimension(width, height));
         setLayout(null);
         this.grains = grains;
+        int size = grains.size();
                 // Tính toán bán kính
         int ovalWidth = width - 6;  // Trừ viền
         int ovalHeight = height - 6; // Trừ viền
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < size/2; i++) {
             // Hạt gạo màu trắng
             setRandomPosition(grains.get(i), ovalWidth, ovalHeight);
         }
 
-        for (int i = 30; i < 60; i++) {
+        for (int i = size/2; i < size; i++) {
             // Hạt thóc màu vàng
             setRandomPosition(grains.get(i), ovalWidth, ovalHeight);
         }        

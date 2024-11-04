@@ -7,12 +7,14 @@ package client.controller;
 import client.model.User;
 import client.view.BXHFrm;
 import client.view.FriendRequestFrm;
+import client.view.GameFrm;
 import client.view.GameNoticeFrm;
 import client.view.HomePageFrm;
 import client.view.LoginFrm;
 import client.view.MakeFriendFrm;
 import client.view.RegisterFrm;
 import client.view.RoomListFrm;
+import client.view.ThongtinDoiThuFrm;
 import client.view.WaittingRoomFrm;
 
 /**
@@ -51,6 +53,9 @@ public class Client {
     public static WaittingRoomFrm waitingRoomFrm;
     public static RoomListFrm roomListFrm;
     public static BXHFrm bxhFrm;
+    public static ThongtinDoiThuFrm doiThuFrm;
+    public static GameFrm gameFrm;
+ 
     public static SocketHandle socketHandle;
 
     public void initView() {
@@ -88,6 +93,10 @@ public class Client {
                 case RANK:
                     bxhFrm.dispose();
                     break;
+                case GAMECLIENT:
+//                    gameFrm.stopAllThread();
+                    gameFrm.dispose();
+                    break;
             }
         }
     }
@@ -118,6 +127,10 @@ public class Client {
             roomListFrm.dispose();
         }
         if(bxhFrm!=null) bxhFrm.dispose();
+        if(gameFrm!=null){
+//            gameFrm.stopAllThread();
+            gameFrm.dispose();
+        }         
     }
 
     public static void openView(View viewName, int arg1, String arg2) {
@@ -129,7 +142,16 @@ public class Client {
             }
         }
     }
-
+    public static void openView(View viewName, User competitor, int room_ID, int isStart){
+        if(viewName != null){
+            switch(viewName){
+                case GAMECLIENT:
+                    gameFrm = new GameFrm(competitor, room_ID, isStart);
+                    gameFrm.setVisible(true);
+                    break;
+            }
+        }
+    }
     public static void openView(View viewName) {
         if (viewName != null) {
             switch (viewName) {
@@ -179,7 +201,15 @@ public class Client {
             }
         }
     }
-
+    public static void openView(View viewName,User u) {
+        if (viewName != null) {
+            switch (viewName) {
+                case COMPETITORINFO:
+                    doiThuFrm = new ThongtinDoiThuFrm(u);
+                    doiThuFrm.setVisible(true);
+            }
+        }
+    }
     public static void main(String[] args) {
         new Client().initView();
     }

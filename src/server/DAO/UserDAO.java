@@ -57,7 +57,7 @@ public class UserDAO extends DAO {
         try {
             PreparedStatement preparedStatement = con.prepareStatement("SELECT user.ID\n"
                     + "FROM user\n"
-                    + "ORDER BY (user.NumberOfGame+user.numberOfDraw*5+user.NumberOfWin*10) DESC");
+                    + "ORDER BY (user.NumberOfGame+user.numberOfDraw+user.NumberOfWin*5) DESC");
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 if (rs.getInt(1) == ID) {
@@ -438,7 +438,7 @@ public class UserDAO extends DAO {
         try {
             PreparedStatement preparedStatement = con.prepareStatement("SELECT *\n"
                     + "FROM user\n"
-                    + "ORDER BY(user.NumberOfGame+user.numberOfDraw*5+user.NumberOfWin*10) DESC\n"
+                    + "ORDER BY(user.NumberOfGame+user.numberOfDraw+user.NumberOfWin*5) DESC\n"
                     + "LIMIT 8");
             System.out.println(preparedStatement);
             ResultSet rs = preparedStatement.executeQuery();

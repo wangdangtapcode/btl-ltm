@@ -73,7 +73,7 @@ public class BXHFrm extends javax.swing.JFrame {
         for(User user : listUserStatics){
             model.addRow(new Object[]{
                 user.getNickname(),
-                (user.getNumberOfGame()+user.getNumberOfDraw()*5+user.getNumberOfwin()*10)+"",
+                (user.getNumberOfGame()+ user.getNumberOfDraw()+user.getNumberOfwin()*5)+"",
                 i+1
             });
             i++;
