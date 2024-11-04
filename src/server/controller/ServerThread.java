@@ -287,20 +287,23 @@ public class ServerThread implements Runnable {
                     userDAO.addWinGame(this.user.getID());
                     userDAO.updateToNotPlaying(this.user.getID());
                     this.room=null;
-                    write("tro-ve-home,");
+                    User a = userDAO.getUserByNickname(this.user.getNickname());
+                    write("tro-ve-home,"+ getStringFromUser(a));
                 }
                 //draw
                 if(messageSplit[0].equals("draw")){
                     userDAO.addDrawGame(this.user.getID());
                     userDAO.updateToNotPlaying(this.user.getID());
                     this.room=null;
-                    write("tro-ve-home,");
+                    User a = userDAO.getUserByNickname(this.user.getNickname());
+                    write("tro-ve-home,"+ getStringFromUser(a));
                 }                
                 //lose
                 if(messageSplit[0].equals("lose")){
                     userDAO.updateToNotPlaying(this.user.getID());
                     this.room=null;
-                    write("tro-ve-home,");
+                    User a = userDAO.getUserByNickname(this.user.getNickname());
+                    write("tro-ve-home,"+ getStringFromUser(a));
                 }
             }
 

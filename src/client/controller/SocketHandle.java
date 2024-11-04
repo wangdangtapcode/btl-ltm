@@ -108,6 +108,9 @@ public class SocketHandle implements Runnable {
                 if (messageSplit[0].equals("login-success")) {
                     System.out.println("Đăng nhập thành công");
                     Client.closeAllViews();
+                    for(String x : messageSplit){
+                        System.out.println(x+";");
+                    }
                     User user = getUserFromString(1, messageSplit);
                     Client.user = user;
                     Client.openView(Client.View.HOMEPAGE);
@@ -273,6 +276,8 @@ public class SocketHandle implements Runnable {
                 }
                 // 
                 if (messageSplit[0].equals("tro-ve-home")) {
+                    User a = getUserFromString(1, messageSplit);
+                    Client.user = a;                    
                     Client.closeAllViews();
                     Client.openView(Client.View.GAMENOTICE, "Trận đấu đã xong", "Đang trở về trang chủ");
                     Thread.sleep(3000);
