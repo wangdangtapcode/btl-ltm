@@ -19,12 +19,12 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
  *
  * @author quang
  */
-
 public class WaittingRoomFrm extends javax.swing.JFrame {
 
     private boolean isOpenning;
     private User DoiThu;
     private String roomID;
+
     /**
      * Creates new form WaittingRoomFrm
      */
@@ -55,11 +55,13 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
         jLabel1.setText("Room " + roomName + " của " + Client.user.getNickname());
         lblKey.setText(Client.user.getNickname());
     }
+
     public void setRoomNameDoiThu(String roomName, String name) {
         this.roomID = roomName;
         jLabel1.setText("Room " + roomName + " của " + name);
         lblKey.setText(name);
     }
+
     public void HaveJoin() {
         isOpenning = true;
         jLabel3.setVisible(false);
@@ -69,6 +71,7 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
         lblDoithu.setText(DoiThu.getNickname());
         lblDoithu.setVisible(true);
     }
+
     public void Join() {
         isOpenning = true;
         jLabel3.setVisible(false);
@@ -77,6 +80,7 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
         lblDoithu.setText(Client.user.getNickname());
         lblDoithu.setVisible(true);
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -228,17 +232,7 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    public void started() {
-        Timer timer = new Timer(3000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Hiện thông báo khi timer kết thúc
-                JOptionPane.showMessageDialog(rootPane, "Trận đấu đang bắt đầu!");
-            }
-        });
-        timer.setRepeats(false); // Chỉ chạy một lần
-        timer.start(); // Bắt đầu timer   
-}
+
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
         if (!isOpenning) {
             try {
@@ -250,9 +244,21 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
             }
         } else {
             if (lblKey.getText().equals(DoiThu.getNickname())) {
-                System.out.println("toi roi phong");
+                try {
+                    Client.closeView(Client.View.WAITINGROOM);
+                    Client.openView(Client.View.HOMEPAGE);
+                    Client.socketHandle.write("not-key-out-room,");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+                }
             } else {
-                System.out.println("doi thu roi phong");
+                try {
+                    Client.closeView(Client.View.WAITINGROOM);
+                    Client.openView(Client.View.HOMEPAGE);
+                    Client.socketHandle.write("key-out-room,");
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+                }
             }
         }
 
@@ -272,7 +278,27 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_btnStartActionPerformed
+    public void DoiThuRoiPhong() {
+        isOpenning = false;
+        jLabel3.setVisible(true);
+        jLabel2.setText("Đang chờ người chơi khác vào phòng");
+        btnStart.setVisible(false);
+        btnDoiThu.setVisible(false);
+        lblDoithu.setText("");
+        lblDoithu.setVisible(false);
+        this.DoiThu = null;
+    }
 
+    public void ChuPhongRoiPhong() {
+        try {
+            JOptionPane.showMessageDialog(rootPane, "Chủ phòng đã rời phòng");
+            Client.closeView(Client.View.WAITINGROOM);
+            Client.openView(Client.View.HOMEPAGE);
+            Client.socketHandle.write("chuphong-out-room,");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
+        }
+    }
     /**
      * @param args the command line arguments
      */

@@ -183,6 +183,7 @@ public class SocketHandle implements Runnable {
                         Client.bxhFrm.setDataToTable(getListRank(messageSplit));
                     }
                 }
+                // phong full
                 if (messageSplit[0].equals("go-to-room")) {
                     System.out.println("Vào phòng");
                     int roomID = Integer.parseInt(messageSplit[1]);
@@ -201,16 +202,15 @@ public class SocketHandle implements Runnable {
                         Client.waitingRoomFrm.setRoomNameDoiThu(roomID + "", competitor.getNickname());
                         Client.waitingRoomFrm.Join();
                     }
-//                    Client.closeAllViews();
-                    System.out.println("Đã vào phòng: " + roomID);
-//                    //Xử lý vào phòng
-//                    Client.openView(Client.View.GAMECLIENT,
-//                            competitor,
-//                            roomID,
-//                            isStart,
-//                            competitorIP);
-//                    Client.gameClientFrm.newgame();
                 }
+                //Doi thu out phong (khong phai chu phong)
+                if (messageSplit[0].equals("doithu-out-room")) {
+                    Client.waitingRoomFrm.DoiThuRoiPhong();
+                }
+                //Doi thu out phong (chu phong)
+                if (messageSplit[0].equals("chuphong-out-room")) {
+                    Client.waitingRoomFrm.ChuPhongRoiPhong();
+                }                 
                 // co nguoi out dot ngot khi dang choi game 
                 if (messageSplit[0].equals("left-room")) {
                     Client.gameFrm.stopTimer();

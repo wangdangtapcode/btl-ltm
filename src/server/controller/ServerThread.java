@@ -212,6 +212,20 @@ public class ServerThread implements Runnable {
                     System.out.println("Đã hủy phòng");
                     this.room = null;
                 }
+                //Xử lý không phải chủ phòng rời phòng
+                if (messageSplit[0].equals("not-key-out-room")) {
+                    room.getCompetitor(clientNumber).write("doithu-out-room,");
+                    this.room = null;
+                }
+                //Xử lý  chủ phòng rời phòng
+                if (messageSplit[0].equals("key-out-room")) {
+                    room.getCompetitor(clientNumber).write("chuphong-out-room,");
+                    this.room = null;
+                }
+                //Xử lý  chủ phòng rời phòng bên đối thủ
+                if (messageSplit[0].equals("chuphong-out-room")) {
+                    this.room = null;
+                }                 
                 //Xử lý xem danh sách phòng 
                 if (messageSplit[0].equals("view-room-list")) {
                     String res = "room-list,";
