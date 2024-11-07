@@ -29,7 +29,7 @@ public class BXHFrm extends javax.swing.JFrame {
      */
     public BXHFrm() {
         initComponents();
-        this.setTitle("Caro Game ");
+        this.setTitle(" Game ");
 
         this.setResizable(false);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);

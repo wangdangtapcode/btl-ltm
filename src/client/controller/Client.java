@@ -40,7 +40,6 @@ public class Client {
         RANK,
         GAMENOTICE,
         FRIENDREQUEST,
-        GAMEAI,
         ROOMNAMEFRM
     }
     public static User user;

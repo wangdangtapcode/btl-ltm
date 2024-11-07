@@ -20,7 +20,6 @@ public class RegisterFrm extends javax.swing.JFrame {
     public RegisterFrm() {
         initComponents();
         this.setTitle(" Dang ky ");
-//        this.setIconImage(new ImageIcon("assets/image/caroicon.png").getImage());
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setLocationRelativeTo(null);

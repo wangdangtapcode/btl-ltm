@@ -21,7 +21,6 @@ public class LoginFrm extends javax.swing.JFrame {
     public LoginFrm() {
         initComponents();
         this.setTitle(" Game ");
-//        this.setIconImage(new ImageIcon("assets/image/caroicon.png").getImage());
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setLocationRelativeTo(null);

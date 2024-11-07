@@ -23,7 +23,7 @@ public class ThongtinDoiThuFrm extends javax.swing.JFrame {
     public ThongtinDoiThuFrm(User user) {
         initComponents();
         this.user = user;
-        this.setTitle("Caro Game");
+        this.setTitle("Game");
         this.setResizable(false);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);
