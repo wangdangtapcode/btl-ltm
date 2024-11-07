@@ -87,11 +87,11 @@ public class OvalPanel extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         // Đặt màu nền
-        g2d.setColor(Color.DARK_GRAY);
+        g2d.setColor(new Color(210, 180, 140));
         g2d.fillOval(0, 0, getWidth() - 6, getHeight() - 6); // Vẽ hình oval đầy đủ
 
         // Đặt màu viền
-        g2d.setColor(Color.DARK_GRAY);
+        g2d.setColor(new Color(139, 69, 19));
         g2d.drawOval(0, 0, getWidth() - 6, getHeight() - 6); // Vẽ viền của hình oval
 
         // Draw rice-shaped objects
@@ -110,7 +110,7 @@ public class OvalPanel extends JPanel {
             // Sinh tọa độ ngẫu nhiên
             x = Math.random() * ovalWidth;
             y = Math.random() * ovalHeight;
-        } while (!isInsideOval(x, y, ovalWidth, ovalHeight));
+        } while (!isInsideOval(x, y, ovalWidth-40, ovalHeight-40));
 
         // Cập nhật tọa độ cho đối tượng
         
