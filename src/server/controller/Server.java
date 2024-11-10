@@ -46,8 +46,6 @@ public class Server {
                 TimeUnit.SECONDS,
                 new ArrayBlockingQueue<>(8) // queueCapacity
         );
-//        admin = new Admin();
-//        admin.run();
         try {
             while (true) {
                 // Chấp nhận một yêu cầu kết nối từ phía Client.

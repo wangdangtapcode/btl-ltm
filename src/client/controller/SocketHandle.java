@@ -4,6 +4,7 @@
  */
 package client.controller;
 
+import client.model.History;
 import client.model.User;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -64,7 +66,19 @@ public class SocketHandle implements Runnable {
         }
         return friend;
     }
-
+    public List<History> getListHis(String[] message) {
+        List<History> hisList = new ArrayList<>();
+        for (int i = 1; i < message.length; i = i + 7) {
+            hisList.add(new History(Integer.parseInt(message[i]),
+                    Integer.parseInt(message[i+1]),
+                    message[i+2],
+                    message[i + 3],
+                    Integer.parseInt(message[i + 4]),
+                    Integer.parseInt(message[i + 5]),
+                    Timestamp.valueOf(message[i + 6])));
+        }
+        return hisList;
+    }
     @Override
     public void run() {
 
@@ -325,6 +339,13 @@ public class SocketHandle implements Runnable {
                         Client.waitingRoomFrm.Join();
                     }
                 }
+                //Xử lý xem lich su
+                if (messageSplit[0].equals("return-get-history")) {
+                    if (Client.historyFrm != null) {
+                        
+                        Client.historyFrm.setDataToTable(getListHis(messageSplit));
+                    }
+                }                
             }
 
         } catch (UnknownHostException e) {

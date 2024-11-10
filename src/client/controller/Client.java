@@ -9,6 +9,7 @@ import client.view.BXHFrm;
 import client.view.FriendRequestFrm;
 import client.view.GameFrm;
 import client.view.GameNoticeFrm;
+import client.view.HistoryFrm;
 import client.view.HomePageFrm;
 import client.view.LoginFrm;
 import client.view.MakeFriendFrm;
@@ -40,7 +41,8 @@ public class Client {
         RANK,
         GAMENOTICE,
         FRIENDREQUEST,
-        ROOMNAMEFRM
+        ROOMNAMEFRM,
+        HISTORY
     }
     public static User user;
     //Danh sách giao diện
@@ -55,8 +57,9 @@ public class Client {
     public static BXHFrm bxhFrm;
     public static ThongtinDoiThuFrm doiThuFrm;
     public static GameFrm gameFrm;
- 
+    public static HistoryFrm historyFrm; 
     public static SocketHandle socketHandle;
+    
     public static JFrame getVisibleJFrame(){
         if(roomListFrm!=null&&roomListFrm.isVisible())
             return roomListFrm;
@@ -91,6 +94,9 @@ public class Client {
                 case MAKEFRIEND:
                     makeFriendFrm.dispose();
                     break;
+                case HISTORY:
+                    historyFrm.dispose();
+                    break;                    
                 case WAITINGROOM:
                     waitingRoomFrm.dispose();
                     break;
@@ -127,6 +133,9 @@ public class Client {
         if (makeFriendFrm != null) {
             makeFriendFrm.dispose();
         }
+        if (historyFrm != null) {
+            historyFrm.dispose();
+        }        
         if (waitingRoomFrm != null) {
             waitingRoomFrm.dispose();
         }
@@ -177,6 +186,10 @@ public class Client {
                 case MAKEFRIEND:
                     makeFriendFrm = new MakeFriendFrm();
                     makeFriendFrm.setVisible(true);
+                    break;
+                case HISTORY:
+                    historyFrm = new HistoryFrm();
+                    historyFrm.setVisible(true);
                     break;
                 case WAITINGROOM:
                     waitingRoomFrm = new WaittingRoomFrm();

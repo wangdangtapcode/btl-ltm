@@ -17,4 +17,15 @@ CREATE TABLE friend(
     FOREIGN KEY (ID_User2) REFERENCES `user`(ID),
     CONSTRAINT PK_friend PRIMARY KEY (ID_User1,ID_User2)
 );
+CREATE TABLE history (
+    ID int AUTO_INCREMENT PRIMARY KEY,                -- ID của trận đấu
+    ID_Player int NOT NULL,          
+    opponent_nickname varchar(255),                 -- ID của người chơi
+    result varchar(50),                               -- Kết quả trận đấu (Win, Loss, Draw)
+    score_player int,                                 -- Điểm của người chơi
+    score_opponent int,                               -- Điểm của đối thủ
+    time_end DATETIME DEFAULT CURRENT_TIMESTAMP,      -- Thời gian kết thúc trận đấu
+    FOREIGN KEY (ID_Player) REFERENCES `user`(ID)    -- Khóa ngoại với bảng user để liên kết với người chơi
+);
+
 Select * from user
