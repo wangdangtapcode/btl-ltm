@@ -124,9 +124,9 @@ public class OvalPanel extends JPanel {
         double x, y;
         do {
             // Sinh tọa độ ngẫu nhiên
-            x = Math.random() * ovalWidth;
-            y = Math.random() * ovalHeight;
-        } while (!isInsideOval(x, y, ovalWidth - 40, ovalHeight - 40));
+            x = Math.random() * (ovalWidth-50);
+            y = Math.random() * (ovalHeight-40);
+        } while (!isInsideOval(x, y, ovalWidth - 50, ovalHeight - 40));
 
         // Cập nhật tọa độ cho đối tượng
         rice.setX(x);
