@@ -20,9 +20,26 @@ public class Room {
     private ServerThread user2;
     private String password;
     private UserDAO userDAO;
-
+    private int soHat;
+    private int Time;
     public int getID() {
         return ID;
+    }
+
+    public int getSoHat() {
+        return soHat;
+    }
+
+    public void setSoHat(int soHat) {
+        this.soHat = soHat;
+    }
+
+    public int getTime() {
+        return Time;
+    }
+
+    public void setTime(int Time) {
+        this.Time = Time;
     }
 
     public ServerThread getUser2() {

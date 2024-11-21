@@ -7,6 +7,8 @@ package client.controller;
 import client.model.OvalPanel;
 import client.model.User;
 import client.view.BXHFrm;
+import client.view.CreateRoomDualFrm;
+import client.view.CreateRoomFrm;
 import client.view.FriendRequestFrm;
 import client.view.GameFrm;
 import client.view.GameNoticeFrm;
@@ -36,7 +38,8 @@ public class Client {
         FINDROOM,
         WAITINGROOM,
         GAMECLIENT,
-        CREATEROOMPASSWORD,
+        CREATEROOM,
+        CREATEROOMDUAL,
         JOINROOMPASSWORD,
         COMPETITORINFO,
         RANK,
@@ -58,17 +61,21 @@ public class Client {
     public static BXHFrm bxhFrm;
     public static ThongtinDoiThuFrm doiThuFrm;
     public static GameFrm gameFrm;
-    public static HistoryFrm historyFrm; 
+    public static HistoryFrm historyFrm;
+    public static CreateRoomFrm createRoomFrm;
+    public static CreateRoomDualFrm createRoomDualFrm;
     public static SocketHandle socketHandle;
-    
-    public static JFrame getVisibleJFrame(){
-        if(roomListFrm!=null&&roomListFrm.isVisible())
+
+    public static JFrame getVisibleJFrame() {
+        if (roomListFrm != null && roomListFrm.isVisible()) {
             return roomListFrm;
-        if(bxhFrm!=null&&bxhFrm.isVisible()){
+        }
+        if (bxhFrm != null && bxhFrm.isVisible()) {
             return bxhFrm;
         }
         return homePageFrm;
     }
+
     public void initView() {
 
         loginFrm = new LoginFrm();
@@ -97,7 +104,7 @@ public class Client {
                     break;
                 case HISTORY:
                     historyFrm.dispose();
-                    break;                    
+                    break;
                 case WAITINGROOM:
                     waitingRoomFrm.dispose();
                     break;
@@ -110,6 +117,12 @@ public class Client {
                 case GAMECLIENT:
 //                    gameFrm.stopAllThread();
                     gameFrm.dispose();
+                    break;
+                case CREATEROOM:
+                    createRoomFrm.dispose();
+                    break;
+                case CREATEROOMDUAL:
+                    createRoomDualFrm.dispose();
                     break;
             }
         }
@@ -136,18 +149,26 @@ public class Client {
         }
         if (historyFrm != null) {
             historyFrm.dispose();
-        }        
+        }
         if (waitingRoomFrm != null) {
             waitingRoomFrm.dispose();
         }
         if (roomListFrm != null) {
             roomListFrm.dispose();
         }
-        if(bxhFrm!=null) bxhFrm.dispose();
-        if(gameFrm!=null){
+        if (bxhFrm != null) {
+            bxhFrm.dispose();
+        }
+        if (gameFrm != null) {
 //            gameFrm.stopAllThread();
             gameFrm.dispose();
-        }         
+        }
+        if (createRoomFrm != null) {
+            createRoomFrm.dispose();
+        }
+        if (createRoomDualFrm != null) {
+            createRoomDualFrm.dispose();
+        }
     }
 
     public static void openView(View viewName, int arg1, String arg2) {
@@ -159,16 +180,18 @@ public class Client {
             }
         }
     }
-    public static void openView(View viewName, User competitor, int room_ID, int isStart,OvalPanel neww){
-        if(viewName != null){
-            switch(viewName){
+
+    public static void openView(View viewName, User competitor, int room_ID, int isStart, int Time, OvalPanel neww) {
+        if (viewName != null) {
+            switch (viewName) {
                 case GAMECLIENT:
-                    gameFrm = new GameFrm(competitor, room_ID, isStart,neww);
+                    gameFrm = new GameFrm(competitor, room_ID, isStart, Time, neww);
                     gameFrm.setVisible(true);
                     break;
             }
         }
     }
+
     public static void openView(View viewName) {
         if (viewName != null) {
             switch (viewName) {
@@ -204,6 +227,9 @@ public class Client {
                     bxhFrm = new BXHFrm();
                     bxhFrm.setVisible(true);
                     break;
+                case CREATEROOM:
+                    createRoomFrm = new CreateRoomFrm();
+                    createRoomFrm.setVisible(true);
 
             }
         }
@@ -222,7 +248,8 @@ public class Client {
             }
         }
     }
-    public static void openView(View viewName,User u) {
+
+    public static void openView(View viewName, User u) {
         if (viewName != null) {
             switch (viewName) {
                 case COMPETITORINFO:
@@ -231,6 +258,17 @@ public class Client {
             }
         }
     }
+
+    public static void openView(View viewName, int id) {
+        if (viewName != null) {
+            switch (viewName) {
+                case CREATEROOMDUAL:
+                    createRoomDualFrm = new CreateRoomDualFrm(id);
+                    createRoomDualFrm.setVisible(true);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         new Client().initView();
     }

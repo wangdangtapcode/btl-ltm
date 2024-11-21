@@ -106,18 +106,18 @@ public class ServerThread implements Runnable {
     }
 
     public void goToOwnRoom() throws IOException {
-        write("go-to-room-duel," + room.getID() + "," + room.getCompetitor(this.getClientNumber()).getClientIP() + ",1," + getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser()));
-        room.getCompetitor(this.clientNumber).write("go-to-room-duel," + room.getID() + "," + this.clientIP + ",0," + getStringFromUser(user));
+        write("go-to-room-duel," + room.getID() + "," + room.getCompetitor(this.getClientNumber()).getClientIP() + ",1," + getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser())+","+room.getSoHat()+","+room.getTime());
+        room.getCompetitor(this.clientNumber).write("go-to-room-duel," + room.getID() + "," + this.clientIP + ",0," + getStringFromUser(user)+","+room.getSoHat()+","+room.getTime());
     }
 
     public void goToPartnerRoom() throws IOException {
-        write("go-to-room," + room.getID() + "," + room.getCompetitor(this.getClientNumber()).getClientIP() + ",0," + getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser()));
-        room.getCompetitor(this.clientNumber).write("go-to-room," + room.getID() + "," + this.clientIP + ",1," + getStringFromUser(user));
+        write("go-to-room," + room.getID() + "," + room.getCompetitor(this.getClientNumber()).getClientIP() + ",0," + getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser())+","+room.getSoHat()+","+room.getTime());
+        room.getCompetitor(this.clientNumber).write("go-to-room," + room.getID() + "," + this.clientIP + ",1," + getStringFromUser(user)+","+room.getSoHat()+","+room.getTime());
     }
 
     public void goToGame(String newOvalPanel) throws IOException {
-        write("go-to-game," + room.getID() + "," + room.getCompetitor(this.getClientNumber()).getClientIP() + ",0," + getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser())+","+newOvalPanel.replaceAll("[\\n\\r]", ""));
-        room.getCompetitor(this.clientNumber).write("go-to-game," + room.getID() + "," + this.clientIP + ",1," + getStringFromUser(user)+","+newOvalPanel.replaceAll("[\\n\\r]", ""));
+        write("go-to-game," + room.getID() + "," + room.getCompetitor(this.getClientNumber()).getClientIP() + ",0," + getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser())+","+room.getTime()+","+newOvalPanel.replaceAll("[\\n\\r]", ""));
+        room.getCompetitor(this.clientNumber).write("go-to-game," + room.getID() + "," + this.clientIP + ",1," + getStringFromUser(user)+","+room.getTime()+","+newOvalPanel.replaceAll("[\\n\\r]", ""));
     }
 
     @Override
@@ -216,12 +216,14 @@ public class ServerThread implements Runnable {
                 }
                 //Xử lý tạo phòng
                 if (messageSplit[0].equals("create-room")) {
+                    int sh = Integer.parseInt(messageSplit[1]);
+                    int time = Integer.parseInt(messageSplit[2]);
                     room = new Room(this);
-
-                    write("your-created-room," + room.getID());
+                    room.setSoHat(sh);
+                    room.setTime(time);
+                    write("your-created-room," + room.getID()+","+sh+","+time);
                     System.out.println("Tạo phòng mới thành công");
 
-//                    userDAO.updateToPlaying(this.user.getID());
                 }
                 //Xử lý huy phòng
                 if (messageSplit[0].equals("cancel-room")) {
@@ -285,7 +287,8 @@ public class ServerThread implements Runnable {
                 if (messageSplit[0].equals("start-room")) {
                     int ID_room = Integer.parseInt(messageSplit[1]);
                     ArrayList<WheatAndRice> grains = new ArrayList<>();
-                    int size = 60;
+                    int size = Integer.parseInt(messageSplit[2]);
+                    int time = Integer.parseInt(messageSplit[3]);
                     for (int i = 0; i < size / 2; i++) {
                         // Hạt gạo màu trắng
                         grains.add(new WheatAndRice(30, 15, new Color(255, 255, 255)));
@@ -354,12 +357,18 @@ public class ServerThread implements Runnable {
                 }
                 //Xử lý khi gửi yêu cầu thách đấu tới bạn bè
                 if (messageSplit[0].equals("duel-request")) {
+                    int sh = Integer.parseInt(messageSplit[2]);
+                    int time = Integer.parseInt(messageSplit[3]);
                     Server.serverThreadBus.sendMessageToUserID(Integer.parseInt(messageSplit[1]),
-                            "duel-notice," + this.user.getID() + "," + this.user.getNickname());
+                            "duel-notice," + this.user.getID() + "," + this.user.getNickname()+"," + sh+","+time);
                 }
                 //Xử lý khi đối thủ đồng ý thách đấu
                 if (messageSplit[0].equals("agree-duel")) {
+                    int sh = Integer.parseInt(messageSplit[2]);
+                    int time = Integer.parseInt(messageSplit[3]);                    
                     this.room = new Room(this);
+                    room.setSoHat(sh);
+                    room.setTime(time);
                     int ID_User2 = Integer.parseInt(messageSplit[1]);
                     ServerThread user2 = Server.serverThreadBus.getServerThreadByUserID(ID_User2);
                     room.setUser2(user2);

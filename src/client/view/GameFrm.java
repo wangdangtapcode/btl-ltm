@@ -38,15 +38,16 @@ public class GameFrm extends javax.swing.JFrame {
     private Integer second, minute;
     private Boolean isDone;
     private int diemDoithu;
+    private int time;
 
-    public GameFrm(User competitor, int room_ID, int isStart, OvalPanel neww) {
+    public GameFrm(User competitor, int room_ID, int isStart, int Time, OvalPanel neww) {
         initComponents();
         this.setTitle("Game");
         this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setLayout(null);
-
+        this.time = Time;
         this.isDone = false;
         this.DoiThu = competitor;
         this.getContentPane().setBackground(new Color(240, 240, 240));
@@ -107,14 +108,20 @@ public class GameFrm extends javax.swing.JFrame {
                 if (temp1.length() == 1) {
                     temp1 = "0" + temp1;
                 }
-                if (second == 0) {
+                if (minute == 0 && second == 0) {
                     lblTime.setText(temp + ":" + temp1);
                     JOptionPane.showMessageDialog(rootPane, "Hết giờ");
                     ActionEvent evt = new ActionEvent(btnDone, ActionEvent.ACTION_PERFORMED, null);
                     btnDoneActionPerformed(evt);
                 } else {
                     lblTime.setText(temp + ":" + temp1);
-                    second--;
+                    if (second == 0) {
+                        minute--;
+                        second = 59;
+                    } else {
+                        second--;
+                    }
+                    
                 }
 
             }
@@ -380,8 +387,8 @@ public class GameFrm extends javax.swing.JFrame {
     }
 
     public void startTimer() {
-        second = 60;
-        minute = 0;
+        second = this.time % 60;
+        minute = this.time / 60;
         timer.start();
     }
 
@@ -448,6 +455,10 @@ public class GameFrm extends javax.swing.JFrame {
      */
     public Boolean getIsDone() {
         return isDone;
+    }
+
+    public void setIsDone(Boolean isDone) {
+        this.isDone = isDone;
     }
 
     public int getDiemDoithu() {

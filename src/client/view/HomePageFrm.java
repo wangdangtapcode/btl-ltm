@@ -47,7 +47,7 @@ public class HomePageFrm extends javax.swing.JFrame {
         if (Client.user.getNumberOfGame() == 0) {
             jLabel12.setText("-");
         } else {
-            jLabel12.setText("" + (Client.user.getNumberOfGame()+Client.user.getNumberOfDraw() + Client.user.getNumberOfwin() * 5 ));
+            jLabel12.setText("" + (Client.user.getNumberOfGame() + Client.user.getNumberOfDraw() + Client.user.getNumberOfwin() * 5));
         }
         if (Client.user.getNumberOfGame() == 0) {
             jLabel11.setText("-");
@@ -493,13 +493,8 @@ public class HomePageFrm extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 
-        try {
-            Client.socketHandle.write("create-room,");
-            this.stopAllThread();
-            Client.closeView(Client.View.HOMEPAGE);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(rootPane, ex.getMessage());
-        }
+        Client.openView(Client.View.CREATEROOM);
+        this.dispose();
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -524,22 +519,24 @@ public class HomePageFrm extends javax.swing.JFrame {
 
     private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
         try {
-            if(jTable2.getSelectedRow()==-1) return;
+            if (jTable2.getSelectedRow() == -1) {
+                return;
+            }
             User friend = listFriend.get(jTable2.getSelectedRow());
-            if(!friend.isIsOnline()){
+            if (!friend.isIsOnline()) {
                 throw new Exception("Người chơi không online");
             }
-            if(friend.isIsPlaying()){
+            if (friend.isIsPlaying()) {
                 throw new Exception("Người chơi đang trong trận đấu");
             }
             isClicked = true;
             int res = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn thách đấu người bạn này không", "Xác nhận thách đầu", JOptionPane.YES_NO_OPTION);
-            if(res == JOptionPane.YES_OPTION){
+            if (res == JOptionPane.YES_OPTION) {
                 Client.closeAllViews();
-                Client.openView(Client.View.GAMENOTICE, "Thách đấu", "Đang chờ phản hồi từ đối thủ");
-                Client.socketHandle.write("duel-request,"+friend.getID());
-            }
-            else{
+                Client.openView(Client.View.CREATEROOMDUAL,friend.getID());
+//                Client.openView(Client.View.GAMENOTICE, "Thách đấu", "Đang chờ phản hồi từ đối thủ");
+//                Client.socketHandle.write("duel-request," + friend.getID());
+            } else {
                 isClicked = false;
                 startThread();
             }
@@ -554,7 +551,7 @@ public class HomePageFrm extends javax.swing.JFrame {
 
     private void btnHistoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistoryActionPerformed
         Client.openView(Client.View.HISTORY);
-        this.dispose();        
+        this.dispose();
     }//GEN-LAST:event_btnHistoryActionPerformed
 
     private void sendMessage() {
