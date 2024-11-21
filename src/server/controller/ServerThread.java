@@ -321,7 +321,8 @@ public class ServerThread implements Runnable {
                 // duoc gui ket qua
                 if (messageSplit[0].equals("gui-ket-qua")) {
                     String rs = messageSplit[1];
-                    room.getCompetitor(clientNumber).write("tra-ket-qua," + rs);
+                    int diem = Integer.parseInt(messageSplit[2]);
+                    room.getCompetitor(clientNumber).write("tra-ket-qua," + rs+","+diem);
                 }
                 //win
                 if (messageSplit[0].equals("win")) {

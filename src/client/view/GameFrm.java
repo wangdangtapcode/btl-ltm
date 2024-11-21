@@ -53,7 +53,8 @@ public class GameFrm extends javax.swing.JFrame {
         this.getContentPane().setBackground(new Color(240, 240, 240));
         lblName.setText(Client.user.getNickname());
         lblDoiThu.setText(DoiThu.getNickname());
-
+        second = 99;
+        minute = 99;
         // Oval
         int x_Oval = PanelOval.getX();
         int y_Oval = PanelOval.getY();
@@ -374,9 +375,9 @@ public class GameFrm extends javax.swing.JFrame {
         }
     }
 
-    public void guiKQ(String rs) {
+    public void guiKQ(String rs,int diem) {
         try {
-            Client.socketHandle.write("gui-ket-qua," + rs);
+            Client.socketHandle.write("gui-ket-qua," + rs+","+diem);
         } catch (IOException ex) {
             Logger.getLogger(GameFrm.class.getName()).log(Level.SEVERE, null, ex);
         }
