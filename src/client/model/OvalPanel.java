@@ -4,12 +4,28 @@
  */
 package client.model;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import static javax.swing.TransferHandler.MOVE;
 
@@ -22,23 +38,23 @@ public class OvalPanel extends JPanel {
     private ArrayList<WheatAndRice> grains;
     private WheatAndRice selectedGrain;
 
-    public OvalPanel(int width, int height,ArrayList<WheatAndRice> grains) {
+    public OvalPanel(int width, int height, ArrayList<WheatAndRice> grains) {
         setPreferredSize(new Dimension(width, height));
         setLayout(null);
         this.grains = grains;
         int size = grains.size();
-                // Tính toán bán kính
+        // Tính toán bán kính
         int ovalWidth = width - 6;  // Trừ viền
         int ovalHeight = height - 6; // Trừ viền
-        for (int i = 0; i < size/2; i++) {
+        for (int i = 0; i < size / 2; i++) {
             // Hạt gạo màu trắng
             setRandomPosition(grains.get(i), ovalWidth, ovalHeight);
         }
 
-        for (int i = size/2; i < size; i++) {
+        for (int i = size / 2; i < size; i++) {
             // Hạt thóc màu vàng
             setRandomPosition(grains.get(i), ovalWidth, ovalHeight);
-        }        
+        }
         setTransferHandler(new GrainTransferHandler());
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
@@ -110,10 +126,9 @@ public class OvalPanel extends JPanel {
             // Sinh tọa độ ngẫu nhiên
             x = Math.random() * ovalWidth;
             y = Math.random() * ovalHeight;
-        } while (!isInsideOval(x, y, ovalWidth-40, ovalHeight-40));
+        } while (!isInsideOval(x, y, ovalWidth - 40, ovalHeight - 40));
 
         // Cập nhật tọa độ cho đối tượng
-        
         rice.setX(x);
         rice.setY(y);
         handleCollision(rice);
@@ -145,7 +160,7 @@ public class OvalPanel extends JPanel {
     // Handle collision between dragged rice shape and other shapes
     public void handleCollision(WheatAndRice draggedRice) {
         for (WheatAndRice rice : grains) {
-            if (rice != draggedRice && rice!=null) {
+            if (rice != draggedRice && rice != null) {
                 double distance = Math.sqrt(Math.pow(draggedRice.getX() - rice.getX(), 2) + Math.pow(draggedRice.getY() - rice.getY(), 2));
                 double minDistance = (draggedRice.getWidth() + rice.getWidth()) / 4;
 
@@ -163,6 +178,7 @@ public class OvalPanel extends JPanel {
         double distance = Math.sqrt(Math.pow(mouseX - rice.getX(), 2) + Math.pow(mouseY - rice.getY(), 2));
         return distance <= rice.getWidth() / 2;  // Sử dụng chiều rộng để xác định phạm vi
     }
+
     public WheatAndRice getDragged() {
         return dragged;
     }
@@ -174,7 +190,9 @@ public class OvalPanel extends JPanel {
     public void clearDragged() {
         dragged = null;
     }
+
     private static class GrainTransferable implements Transferable {
+
         private WheatAndRice grain;
 
         public GrainTransferable(WheatAndRice grain) {
@@ -193,7 +211,32 @@ public class OvalPanel extends JPanel {
             return flavor.getRepresentationClass() == WheatAndRice.class;
         }
     }
+
+    private static class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
+
+        @Override
+        public JsonElement serialize(Color src, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject jsonColor = new JsonObject();
+            jsonColor.addProperty("r", src.getRed());
+            jsonColor.addProperty("g", src.getGreen());
+            jsonColor.addProperty("b", src.getBlue());
+            jsonColor.addProperty("alpha", src.getAlpha());
+            return jsonColor;
+        }
+
+        @Override
+        public Color deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject jsonColor = json.getAsJsonObject();
+            int r = jsonColor.get("r").getAsInt();
+            int g = jsonColor.get("g").getAsInt();
+            int b = jsonColor.get("b").getAsInt();
+            int alpha = jsonColor.get("alpha").getAsInt();
+            return new Color(r, g, b, alpha);
+        }
+    }
+
     private class GrainTransferHandler extends TransferHandler {
+
         protected Transferable createTransferable(JComponent c) {
             return new GrainTransferable(selectedGrain);
         }
@@ -212,5 +255,54 @@ public class OvalPanel extends JPanel {
             selectedGrain = null; // Reset lựa chọn
         }
     }
-}
 
+    public String toJson() {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Color.class, new ColorTypeAdapter()) // Đăng ký TypeAdapter cho Color
+                .setPrettyPrinting() // Đảm bảo JSON có định dạng đẹp
+                .create();
+
+        return gson.toJson(this.grains); // Tuần tự hóa chỉ danh sách grains
+    }
+
+    public static OvalPanel fromJson(String json) {
+        // In ra chuỗi JSON nhận được để kiểm tra
+        System.out.println("Received JSON: " + json);
+
+        // Loại bỏ tất cả khoảng trắng thừa ở giữa các đối tượng JSON
+        // Cách này chỉ cần thiết nếu khoảng trắng trong JSON gây vấn đề
+        json = json.replaceAll("\\s+", "");  // Loại bỏ tất cả khoảng trắng dư thừa
+
+        // Sau khi loại bỏ khoảng trắng, bạn có thể kiểm tra lại chuỗi JSON
+        System.out.println("Normalized JSON: " + json);
+
+        // Khởi tạo Gson với custom type adapter cho đối tượng Color
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Color.class, new ColorTypeAdapter())
+                .create();
+
+        // Phân tích chuỗi JSON thành đối tượng JsonElement
+        JsonElement element = JsonParser.parseString(json);
+
+        // Kiểm tra xem dữ liệu có phải là một mảng hay không
+        if (!element.isJsonArray()) {
+            throw new IllegalArgumentException("Invalid JSON format: Expected an array.");
+        }
+
+        // Chuyển JsonElement thành ArrayList<WheatAndRice>
+        ArrayList<WheatAndRice> grains = gson.fromJson(element, new TypeToken<ArrayList<WheatAndRice>>() {
+        }.getType());
+
+        // Tạo và trả về đối tượng OvalPanel với danh sách grains
+        return new OvalPanel(685, 419, grains);
+    }
+
+    public ArrayList<WheatAndRice> getGrains() {
+        return grains;
+    }
+
+    public void setGrains(ArrayList<WheatAndRice> grains) {
+        this.grains = grains;
+    }
+
+}

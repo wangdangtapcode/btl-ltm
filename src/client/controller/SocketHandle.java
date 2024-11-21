@@ -5,6 +5,7 @@
 package client.controller;
 
 import client.model.History;
+import client.model.OvalPanel;
 import client.model.User;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -239,15 +240,20 @@ public class SocketHandle implements Runnable {
                     int roomID = Integer.parseInt(messageSplit[1]);
                     String competitorIP = messageSplit[2];
                     int isKey = Integer.parseInt(messageSplit[3]);
-
+                    String json ="";
+                    for(int i = 12 ; i<messageSplit.length;i++){
+                        if(i!=(messageSplit.length - 1)) json+=messageSplit[i]+",";
+                        else json+=messageSplit[i];
+                    }
+                    OvalPanel newOvalPanel = OvalPanel.fromJson(json);
                     User competitor = getUserFromString(4, messageSplit);
                     if (isKey == 0) { // la key
                         Client.closeAllViews();
-                        Client.openView(Client.View.GAMECLIENT, competitor, roomID, isKey);
+                        Client.openView(Client.View.GAMECLIENT, competitor, roomID, isKey,newOvalPanel);
                         Client.gameFrm.newgame();
                     } else {
                         Client.closeAllViews();
-                        Client.openView(Client.View.GAMECLIENT, competitor, roomID, isKey);
+                        Client.openView(Client.View.GAMECLIENT, competitor, roomID, isKey,newOvalPanel);
                         Client.gameFrm.newgame();
                     }
                 }

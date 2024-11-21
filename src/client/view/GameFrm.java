@@ -39,28 +39,20 @@ public class GameFrm extends javax.swing.JFrame {
     private Boolean isDone;
     private int diemDoithu;
 
-    public GameFrm(User competitor, int room_ID, int isStart) {
+    public GameFrm(User competitor, int room_ID, int isStart, OvalPanel neww) {
         initComponents();
         this.setTitle("Game");
         this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setLayout(null);
-        int size = 60;
+        
         this.isDone = false;
         this.DoiThu = competitor;
         this.getContentPane().setBackground(new Color(240, 240, 240));
         lblName.setText(Client.user.getNickname());
         lblDoiThu.setText(DoiThu.getNickname());
-        for (int i = 0; i < size / 2; i++) {
-            // Hạt gạo màu trắng
-            grains.add(new WheatAndRice(30, 15, new Color(255, 255, 255)));
-        }
 
-        for (int i = size / 2; i < size; i++) {
-            // Hạt thóc màu vàng
-            grains.add(new WheatAndRice(30, 15, new Color(255, 204, 0)));
-        }
         // Oval
         int x_Oval = PanelOval.getX();
         int y_Oval = PanelOval.getY();
@@ -69,8 +61,7 @@ public class GameFrm extends javax.swing.JFrame {
 
         Container parent = PanelOval.getParent();
         parent.remove(PanelOval);
-
-        newOvalPanel = new OvalPanel(ovalWidth, ovalHeight, grains);
+        newOvalPanel = neww;
         newOvalPanel.setBounds(x_Oval, y_Oval, ovalWidth, ovalHeight);
 
         parent.add(newOvalPanel);

@@ -4,6 +4,7 @@
  */
 package client.controller;
 
+import client.model.OvalPanel;
 import client.model.User;
 import client.view.BXHFrm;
 import client.view.FriendRequestFrm;
@@ -158,11 +159,11 @@ public class Client {
             }
         }
     }
-    public static void openView(View viewName, User competitor, int room_ID, int isStart){
+    public static void openView(View viewName, User competitor, int room_ID, int isStart,OvalPanel neww){
         if(viewName != null){
             switch(viewName){
                 case GAMECLIENT:
-                    gameFrm = new GameFrm(competitor, room_ID, isStart);
+                    gameFrm = new GameFrm(competitor, room_ID, isStart,neww);
                     gameFrm.setVisible(true);
                     break;
             }

@@ -5,14 +5,18 @@
 package server.controller;
 
 import client.model.History;
+import client.model.OvalPanel;
 import client.model.Room;
 import client.model.User;
+import client.model.WheatAndRice;
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -94,11 +98,13 @@ public class ServerThread implements Runnable {
                 + "," + user1.getPassword() + "," + user1.getNickname() + "," + user1.getNumberOfGame() + ","
                 + user1.getNumberOfwin() + "," + user1.getNumberOfDraw() + "," + user1.getRank();
     }
+
     public String getStringFromHis(History his) {
         return "" + his.getId() + "," + his.getIdPlayer()
                 + "," + his.getOpponentNickname() + "," + his.getResult() + "," + his.getScorePlayer() + ","
-                + his.getScoreOpponent() + "," + his.getTimeEnd() ;
+                + his.getScoreOpponent() + "," + his.getTimeEnd();
     }
+
     public void goToOwnRoom() throws IOException {
         write("go-to-room-duel," + room.getID() + "," + room.getCompetitor(this.getClientNumber()).getClientIP() + ",1," + getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser()));
         room.getCompetitor(this.clientNumber).write("go-to-room-duel," + room.getID() + "," + this.clientIP + ",0," + getStringFromUser(user));
@@ -109,9 +115,9 @@ public class ServerThread implements Runnable {
         room.getCompetitor(this.clientNumber).write("go-to-room," + room.getID() + "," + this.clientIP + ",1," + getStringFromUser(user));
     }
 
-    public void goToGame() throws IOException {
-        write("go-to-game," + room.getID() + "," + room.getCompetitor(this.getClientNumber()).getClientIP() + ",0," + getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser()));
-        room.getCompetitor(this.clientNumber).write("go-to-game," + room.getID() + "," + this.clientIP + ",1," + getStringFromUser(user));
+    public void goToGame(String newOvalPanel) throws IOException {
+        write("go-to-game," + room.getID() + "," + room.getCompetitor(this.getClientNumber()).getClientIP() + ",0," + getStringFromUser(room.getCompetitor(this.getClientNumber()).getUser())+","+newOvalPanel.replaceAll("[\\n\\r]", ""));
+        room.getCompetitor(this.clientNumber).write("go-to-game," + room.getID() + "," + this.clientIP + ",1," + getStringFromUser(user)+","+newOvalPanel.replaceAll("[\\n\\r]", ""));
     }
 
     @Override
@@ -278,11 +284,24 @@ public class ServerThread implements Runnable {
                 }
                 if (messageSplit[0].equals("start-room")) {
                     int ID_room = Integer.parseInt(messageSplit[1]);
+                    ArrayList<WheatAndRice> grains = new ArrayList<>();
+                    int size = 60;
+                    for (int i = 0; i < size / 2; i++) {
+                        // Hạt gạo màu trắng
+                        grains.add(new WheatAndRice(30, 15, new Color(255, 255, 255)));
+                    }
+
+                    for (int i = size / 2; i < size; i++) {
+                        // Hạt thóc màu vàng
+                        grains.add(new WheatAndRice(30, 15, new Color(255, 204, 0)));
+                    }
+                    OvalPanel newOvalPanel = new OvalPanel(685, 419, grains);
+                    
                     for (ServerThread serverThread : Server.serverThreadBus.getListServerThreads()) {
                         if (serverThread.room.getID() == ID_room) {
                             room.increaseNumberOfGame();
                             room.setUsersToPlaying();
-                            goToGame();
+                            goToGame(newOvalPanel.toJson());
                             break;
                         }
                     }
@@ -305,7 +324,7 @@ public class ServerThread implements Runnable {
                 if (messageSplit[0].equals("win")) {
                     int diem = Integer.parseInt(messageSplit[1]);
                     int diemdoithu = Integer.parseInt(messageSplit[2]);
-                    hisDAO.saveMatchHistory(user.getID(),room.getCompetitor(clientNumber).user.getNickname() , "win", diem, diemdoithu);
+                    hisDAO.saveMatchHistory(user.getID(), room.getCompetitor(clientNumber).user.getNickname(), "win", diem, diemdoithu);
                     userDAO.addWinGame(this.user.getID());
                     userDAO.updateToNotPlaying(this.user.getID());
                     this.room = null;
@@ -315,8 +334,8 @@ public class ServerThread implements Runnable {
                 //draw
                 if (messageSplit[0].equals("draw")) {
                     int diem = Integer.parseInt(messageSplit[1]);
-                    int diemdoithu = Integer.parseInt(messageSplit[2]);               
-                    hisDAO.saveMatchHistory(user.getID(),room.getCompetitor(clientNumber).user.getNickname() , "draw", diem, diemdoithu);
+                    int diemdoithu = Integer.parseInt(messageSplit[2]);
+                    hisDAO.saveMatchHistory(user.getID(), room.getCompetitor(clientNumber).user.getNickname(), "draw", diem, diemdoithu);
                     userDAO.addDrawGame(this.user.getID());
                     userDAO.updateToNotPlaying(this.user.getID());
                     this.room = null;
@@ -326,8 +345,8 @@ public class ServerThread implements Runnable {
                 //lose
                 if (messageSplit[0].equals("lose")) {
                     int diem = Integer.parseInt(messageSplit[1]);
-                    int diemdoithu = Integer.parseInt(messageSplit[2]);               
-                    hisDAO.saveMatchHistory(user.getID(),room.getCompetitor(clientNumber).user.getNickname() , "lose", diem, diemdoithu);              
+                    int diemdoithu = Integer.parseInt(messageSplit[2]);
+                    hisDAO.saveMatchHistory(user.getID(), room.getCompetitor(clientNumber).user.getNickname(), "lose", diem, diemdoithu);
                     userDAO.updateToNotPlaying(this.user.getID());
                     this.room = null;
                     User a = userDAO.getUserByNickname(this.user.getNickname());
@@ -360,7 +379,7 @@ public class ServerThread implements Runnable {
                     }
                     System.out.println(res);
                     write(res);
-                }          
+                }
             }
 
         } catch (IOException e) {
