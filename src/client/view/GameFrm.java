@@ -46,7 +46,7 @@ public class GameFrm extends javax.swing.JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setLayout(null);
-        
+
         this.isDone = false;
         this.DoiThu = competitor;
         this.getContentPane().setBackground(new Color(240, 240, 240));
@@ -61,7 +61,12 @@ public class GameFrm extends javax.swing.JFrame {
 
         Container parent = PanelOval.getParent();
         parent.remove(PanelOval);
+
         newOvalPanel = neww;
+        System.out.println("/////");
+        for (int i = 0; i < newOvalPanel.getGrains().size(); i++) {
+            System.out.println(newOvalPanel.getGrains().get(i).getX() + " " + newOvalPanel.getGrains().get(i).getY());
+        }
         newOvalPanel.setBounds(x_Oval, y_Oval, ovalWidth, ovalHeight);
 
         parent.add(newOvalPanel);
@@ -412,7 +417,7 @@ public class GameFrm extends javax.swing.JFrame {
             String message = "Bạn Thắng\nĐiểm bạn là: " + tongDiem() + "\nĐiểm đối thủ là: " + getDiemDoithu();
             JOptionPane.showMessageDialog(rootPane, message);
             try {
-                Client.socketHandle.write("win,"+tongDiem()+","+getDiemDoithu());
+                Client.socketHandle.write("win," + tongDiem() + "," + getDiemDoithu());
             } catch (IOException ex) {
                 Logger.getLogger(GameFrm.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -420,7 +425,7 @@ public class GameFrm extends javax.swing.JFrame {
             String message = "Hoà\nĐiểm bạn là: " + tongDiem() + "\nĐiểm đối thủ là: " + getDiemDoithu();
             JOptionPane.showMessageDialog(rootPane, message);
             try {
-                Client.socketHandle.write("draw,"+tongDiem()+","+getDiemDoithu());
+                Client.socketHandle.write("draw," + tongDiem() + "," + getDiemDoithu());
             } catch (IOException ex) {
                 Logger.getLogger(GameFrm.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -428,7 +433,7 @@ public class GameFrm extends javax.swing.JFrame {
             String message = "Bạn Thua\nĐiểm bạn là: " + tongDiem() + "\nĐiểm đối thủ là: " + getDiemDoithu();
             JOptionPane.showMessageDialog(rootPane, message);
             try {
-                Client.socketHandle.write("lose,"+tongDiem()+","+getDiemDoithu());
+                Client.socketHandle.write("lose," + tongDiem() + "," + getDiemDoithu());
             } catch (IOException ex) {
                 Logger.getLogger(GameFrm.class.getName()).log(Level.SEVERE, null, ex);
             }

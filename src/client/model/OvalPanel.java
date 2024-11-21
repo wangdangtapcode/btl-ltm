@@ -294,9 +294,28 @@ public class OvalPanel extends JPanel {
         }.getType());
 
         // Tạo và trả về đối tượng OvalPanel với danh sách grains
-        return new OvalPanel(685, 419, grains);
+        return new OvalPanel(grains);
     }
-
+    public OvalPanel(ArrayList<WheatAndRice> grains) {
+        int width = 685;
+        int height = 419;
+        setPreferredSize(new Dimension(width, height));
+        setLayout(null);
+        this.grains = grains;
+        setTransferHandler(new GrainTransferHandler());
+        addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                for (WheatAndRice grain : grains) {
+                    if (grain.contains(e.getX(), e.getY())) {
+                        selectedGrain = grain;
+                        TransferHandler handler = getTransferHandler();
+                        handler.exportAsDrag(OvalPanel.this, e, TransferHandler.MOVE);
+                        break;
+                    }
+                }
+            }
+        });
+    }
     public ArrayList<WheatAndRice> getGrains() {
         return grains;
     }

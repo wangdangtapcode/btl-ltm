@@ -67,12 +67,13 @@ public class SocketHandle implements Runnable {
         }
         return friend;
     }
+
     public List<History> getListHis(String[] message) {
         List<History> hisList = new ArrayList<>();
         for (int i = 1; i < message.length; i = i + 7) {
             hisList.add(new History(Integer.parseInt(message[i]),
-                    Integer.parseInt(message[i+1]),
-                    message[i+2],
+                    Integer.parseInt(message[i + 1]),
+                    message[i + 2],
                     message[i + 3],
                     Integer.parseInt(message[i + 4]),
                     Integer.parseInt(message[i + 5]),
@@ -80,6 +81,7 @@ public class SocketHandle implements Runnable {
         }
         return hisList;
     }
+
     @Override
     public void run() {
 
@@ -240,20 +242,26 @@ public class SocketHandle implements Runnable {
                     int roomID = Integer.parseInt(messageSplit[1]);
                     String competitorIP = messageSplit[2];
                     int isKey = Integer.parseInt(messageSplit[3]);
-                    String json ="";
-                    for(int i = 12 ; i<messageSplit.length;i++){
-                        if(i!=(messageSplit.length - 1)) json+=messageSplit[i]+",";
-                        else json+=messageSplit[i];
+                    String json = "";
+                    for (int i = 12; i < messageSplit.length; i++) {
+                        if (i != (messageSplit.length - 1)) {
+                            json += messageSplit[i] + ",";
+                        } else {
+                            json += messageSplit[i];
+                        }
                     }
                     OvalPanel newOvalPanel = OvalPanel.fromJson(json);
+                    for (int i = 0; i < newOvalPanel.getGrains().size(); i++) {
+                        System.out.println(newOvalPanel.getGrains().get(i).getX() + " " + newOvalPanel.getGrains().get(i).getY());
+                    }
                     User competitor = getUserFromString(4, messageSplit);
                     if (isKey == 0) { // la key
                         Client.closeAllViews();
-                        Client.openView(Client.View.GAMECLIENT, competitor, roomID, isKey,newOvalPanel);
+                        Client.openView(Client.View.GAMECLIENT, competitor, roomID, isKey, newOvalPanel);
                         Client.gameFrm.newgame();
                     } else {
                         Client.closeAllViews();
-                        Client.openView(Client.View.GAMECLIENT, competitor, roomID, isKey,newOvalPanel);
+                        Client.openView(Client.View.GAMECLIENT, competitor, roomID, isKey, newOvalPanel);
                         Client.gameFrm.newgame();
                     }
                 }
@@ -348,10 +356,10 @@ public class SocketHandle implements Runnable {
                 //Xử lý xem lich su
                 if (messageSplit[0].equals("return-get-history")) {
                     if (Client.historyFrm != null) {
-                        
+
                         Client.historyFrm.setDataToTable(getListHis(messageSplit));
                     }
-                }                
+                }
             }
 
         } catch (UnknownHostException e) {
