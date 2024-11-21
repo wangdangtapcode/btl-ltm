@@ -28,7 +28,7 @@ public class FriendRequestFrm extends javax.swing.JFrame {
     public FriendRequestFrm(int ID, String nickname) {
         this.ID = ID;
         initComponents();
-        this.setTitle("Game");
+        this.setTitle("Loi moi ket ban");
         this.setResizable(false);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);

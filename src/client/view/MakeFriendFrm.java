@@ -21,7 +21,7 @@ public class MakeFriendFrm extends javax.swing.JFrame {
      */
     public MakeFriendFrm() {
         initComponents();
-        this.setTitle(" Game ");
+        this.setTitle(" Ket ban ");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setLocationRelativeTo(null);        

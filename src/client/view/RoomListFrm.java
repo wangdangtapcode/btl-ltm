@@ -30,7 +30,7 @@ public class RoomListFrm extends javax.swing.JFrame {
      */
     public RoomListFrm() {
         initComponents();
-        this.setTitle(" Game ");
+        this.setTitle(" Danh sach phong ");
         this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);

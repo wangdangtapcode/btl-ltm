@@ -24,7 +24,7 @@ public class HistoryFrm extends javax.swing.JFrame {
     private DefaultTableModel model;
     public HistoryFrm() {
         initComponents();
-        this.setTitle(" Game ");
+        this.setTitle(" Lich su dau ");
 
         this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);

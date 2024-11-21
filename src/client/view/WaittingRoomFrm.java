@@ -30,7 +30,7 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
      */
     public WaittingRoomFrm() {
         initComponents();
-        this.setTitle(" Game ");
+        this.setTitle(" Phong cho ");
         btnStart.setVisible(false);
         btnDoiThu.setVisible(false);
         lblDoithu.setVisible(false);

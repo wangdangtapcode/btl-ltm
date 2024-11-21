@@ -29,7 +29,7 @@ public class BXHFrm extends javax.swing.JFrame {
      */
     public BXHFrm() {
         initComponents();
-        this.setTitle(" Game ");
+        this.setTitle(" Bang xep hang ");
 
         this.setResizable(false);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);

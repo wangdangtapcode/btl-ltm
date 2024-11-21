@@ -384,7 +384,7 @@ public class GameFrm extends javax.swing.JFrame {
     }
 
     public void startTimer() {
-        second = 40;
+        second = 60;
         minute = 0;
         timer.start();
     }
