@@ -472,7 +472,7 @@ public class HomePageFrm extends javax.swing.JFrame {
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(rootPane, ex.getMessage());
         }
-        Client.closeView(Client.View.HOMEPAGE);
+        this.dispose();
         Client.openView(Client.View.LOGIN);
     }//GEN-LAST:event_btnDangXuatActionPerformed
 

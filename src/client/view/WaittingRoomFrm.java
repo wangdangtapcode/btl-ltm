@@ -270,7 +270,7 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
         if (!isOpenning) {
             try {
-                Client.closeView(Client.View.WAITINGROOM);
+                Client.closeAllViews();
                 Client.openView(Client.View.HOMEPAGE);
                 Client.socketHandle.write("cancel-room,");
             } catch (IOException ex) {
@@ -279,7 +279,7 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
         } else {
             if (lblKey.getText().equals(DoiThu.getNickname())) {
                 try {
-                    Client.closeView(Client.View.WAITINGROOM);
+                    Client.closeAllViews();
                     Client.openView(Client.View.HOMEPAGE);
                     Client.socketHandle.write("not-key-out-room,");
                 } catch (IOException ex) {
@@ -287,7 +287,7 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
                 }
             } else {
                 try {
-                    Client.closeView(Client.View.WAITINGROOM);
+                    Client.closeAllViews();
                     Client.openView(Client.View.HOMEPAGE);
                     Client.socketHandle.write("key-out-room,");
                 } catch (IOException ex) {
@@ -308,7 +308,7 @@ public class WaittingRoomFrm extends javax.swing.JFrame {
                 int sh = Integer.parseInt(txtSoHat.getText());
                 int time = Integer.parseInt(txtTime.getText());
                 Client.socketHandle.write("start-room," + this.roomID +","+sh+","+time);
-                Client.closeView(Client.View.WAITINGROOM);
+                this.dispose();
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(rootPane, ex.getMessage());
             }

@@ -129,8 +129,8 @@ public class MakeFriendFrm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSubActionPerformed
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        Client.closeAllViews();
         Client.openView(Client.View.HOMEPAGE);
-        this.dispose();
     }//GEN-LAST:event_btnBackActionPerformed
     public void showError(String message) {
         JOptionPane.showMessageDialog(rootPane, message);

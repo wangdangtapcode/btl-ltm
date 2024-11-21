@@ -151,7 +151,7 @@ public class CreateRoomFrm extends javax.swing.JFrame {
             String sohat = txtSoHat.getText();
             String time = txtTime.getText();
             Client.socketHandle.write("create-room,"+sohat+","+time);
-            Client.closeView(Client.View.HOMEPAGE);
+            Client.closeAllViews();
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(rootPane, ex.getMessage());
         }

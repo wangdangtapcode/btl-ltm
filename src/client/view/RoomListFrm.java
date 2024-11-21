@@ -178,7 +178,7 @@ public class RoomListFrm extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         isPlayThread = false;
-        Client.closeView(Client.View.ROOMLIST);
+        this.dispose();
         Client.openView(Client.View.HOMEPAGE);
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -190,7 +190,7 @@ public class RoomListFrm extends javax.swing.JFrame {
                 int index = jTable2.getSelectedRow();
                 int room = Integer.parseInt(listRoom.get(index).split(" ")[1]);
                 Client.socketHandle.write("join-room," + room);
-                Client.closeView(Client.View.ROOMLIST);
+                Client.closeAllViews();
 
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(rootPane, ex.getMessage());

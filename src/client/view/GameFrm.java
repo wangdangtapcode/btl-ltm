@@ -376,6 +376,7 @@ public class GameFrm extends javax.swing.JFrame {
     }
 
     public void guiKQ(String rs,int diem) {
+        stopTimer();
         try {
             Client.socketHandle.write("gui-ket-qua," + rs+","+diem);
         } catch (IOException ex) {
@@ -398,6 +399,7 @@ public class GameFrm extends javax.swing.JFrame {
     }
 
     public int tongDiem() {
+        stopTimer();
         int sum = 0;
         for (int i = 0; i < newWheatPanel.getGrains().size(); i++) {
             if (newWheatPanel.getGrains().get(i).getColor().equals(new Color(255, 204, 0))) {
@@ -420,6 +422,7 @@ public class GameFrm extends javax.swing.JFrame {
     }
 
     public void ketQua(String result) {
+        stopTimer();
         if (result.equals("win")) {
 
             String message = "Bạn Thắng\nĐiểm bạn là: " + tongDiem() + "\nĐiểm đối thủ là: " + getDiemDoithu();
