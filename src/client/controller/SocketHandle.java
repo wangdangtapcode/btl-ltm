@@ -276,12 +276,11 @@ public class SocketHandle implements Runnable {
                 }
                 // mot nguoi xong
                 if (messageSplit[0].equals("doithu-xong")) {
-                    Client.gameFrm.setIsDone(true);
-//                    if (Client.gameFrm.getIsDone()) {
-//                        Client.closeView(Client.View.GAMENOTICE);
+//                    Client.gameFrm.setIsDone(true);
+                    if (Client.gameFrm.getIsDone()) {
+                        Client.closeView(Client.View.GAMENOTICE);
                         String ketqua = "";
                         int diemDoiThu = Integer.parseInt(messageSplit[1]);
-                        int diem = Client.gameFrm.tongDiem();
                         Client.gameFrm.setDiemDoithu(diemDoiThu);
                         if (Client.gameFrm.getDiemDoithu() == Client.gameFrm.tongDiem()) {
                             ketqua = "draw";
@@ -292,26 +291,26 @@ public class SocketHandle implements Runnable {
                         }
                         if (!ketqua.isEmpty()) {
                             if (ketqua.equals("win")) {
-                                Client.gameFrm.guiKQ("lose",diem);
+                                Client.gameFrm.guiKQ("lose");
                             } else if (ketqua.equals("draw")) {
-                                Client.gameFrm.guiKQ("draw",diem);
+                                Client.gameFrm.guiKQ("draw");
                             } else {
-                                Client.gameFrm.guiKQ("win",diem);
+                                Client.gameFrm.guiKQ("win");
                             }
                             Client.gameFrm.ketQua(ketqua);
 
                         }
-//                    } else {
-//                        int diemDoiThu = Integer.parseInt(messageSplit[1]);
-//                        Client.gameFrm.setDiemDoithu(diemDoiThu);
-//                        Client.gameFrm.chuaXong();
-//                    }
+                    } else {
+                        int diemDoiThu = Integer.parseInt(messageSplit[1]);
+                        Client.gameFrm.setDiemDoithu(diemDoiThu);
+                        Client.gameFrm.chuaXong();
+                    }
                 }
-//                //
-//                if (messageSplit[0].equals("doithu-chua-xong")) {
-//                    Client.openView(Client.View.GAMENOTICE, "Đối thủ chưa xong", "Đang đợi dối thủ");
-//                }
-                // 
+                //
+                if (messageSplit[0].equals("doithu-chua-xong")) {
+                    Client.openView(Client.View.GAMENOTICE, "Đối thủ chưa xong", "Đang đợi dối thủ");
+                }
+                 
                 if (messageSplit[0].equals("tro-ve-home")) {
                     User a = getUserFromString(1, messageSplit);
                     Client.user = a;
@@ -323,8 +322,6 @@ public class SocketHandle implements Runnable {
                 }
                 //
                 if (messageSplit[0].equals("tra-ket-qua")) {
-                    int diem = Integer.parseInt(messageSplit[2]);
-                    Client.gameFrm.setDiemDoithu(diem);
                     String rs = messageSplit[1];
                     Client.gameFrm.ketQua(rs);
                 }

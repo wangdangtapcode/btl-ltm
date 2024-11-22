@@ -360,6 +360,7 @@ public class GameFrm extends javax.swing.JFrame {
 
     private void btnDoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDoneActionPerformed
         try {
+            btnDone.setVisible(false);
             this.isDone = true;
             stopTimer();
             Client.socketHandle.write("done," + tongDiem());
@@ -375,10 +376,10 @@ public class GameFrm extends javax.swing.JFrame {
         }
     }
 
-    public void guiKQ(String rs,int diem) {
+    public void guiKQ(String rs) {
         stopTimer();
         try {
-            Client.socketHandle.write("gui-ket-qua," + rs+","+diem);
+            Client.socketHandle.write("gui-ket-qua," + rs);
         } catch (IOException ex) {
             Logger.getLogger(GameFrm.class.getName()).log(Level.SEVERE, null, ex);
         }
