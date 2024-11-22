@@ -213,13 +213,12 @@ public class SocketHandle implements Runnable {
                     int sh = Integer.parseInt(messageSplit[messageSplit.length - 2]);
                     int time = Integer.parseInt(messageSplit[messageSplit.length - 1]);
                     User competitor = getUserFromString(4, messageSplit);
-                    if (Client.waitingRoomFrm != null) {
+                    if (isKey == 1) {
                         Client.waitingRoomFrm.setDoiThu(competitor);
                         Client.waitingRoomFrm.HaveJoin();
                         Client.waitingRoomFrm.setSoHat(sh);
                         Client.waitingRoomFrm.setTime(time);
                     } else {
-                        Client.closeAllViews();
                         Client.openView(Client.View.WAITINGROOM);
                         Client.waitingRoomFrm.setDoiThu(competitor);
                         Client.waitingRoomFrm.setRoomNameDoiThu(roomID + "", competitor.getNickname());
