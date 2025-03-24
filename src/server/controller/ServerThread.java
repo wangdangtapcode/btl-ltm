@@ -404,8 +404,9 @@ public class ServerThread implements Runnable {
             //remove thread khỏi bus
             Server.serverThreadBus.remove(clientNumber);
             System.out.println(this.clientNumber + " đã thoát");
-            ServerThread DoiThu = room.getCompetitor(clientNumber);
+
             if (room != null) {
+                ServerThread DoiThu = room.getCompetitor(clientNumber);
                 try {
                     if (DoiThu != null && DoiThu.getUserDAO().getUserByNickname(DoiThu.getUser().getNickname()).getIsPlaying()) {
                         room.decreaseNumberOfGame();
